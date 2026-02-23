@@ -31,6 +31,8 @@ let
         "libvirtd" # Libvirt virtualization
         "kvm" # Kernel-based Virtual Machine
         "docker" # Docker container management
+        "lp"
+        "bluetooth"
       ];
       shell = pkgs.zsh; # Default shell (zsh)
     };
@@ -45,10 +47,11 @@ in
 
     # === SERVICES CONFIGURATION ===
     ../../modules/nixos/services/security # Security hardening (SSH, sudo, etc.)
-    ../../modules/nixos/services/resolved # Docker configuration for container management
-    ../../modules/nixos/services/gaming # Gaming-related services (Lutris, Steam, etc.)
-    ../../modules/nixos/services/git # Git configuration for version control
+    ../../modules/nixos/services/resolved
+    ../../modules/nixos/services/gaming
+    ../../modules/nixos/services/git 
     ../../modules/nixos/services/multimedia # Multimedia services (audio, video, etc.)
+    ../../modules/nixos/services/warp 
     ../../modules/nixos/services/tailscale # Tailscale configuration for secure VPN access
     ../../modules/nixos/services/cloudflared # Cloudflared configuration for secure tunneling
 

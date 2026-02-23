@@ -11,6 +11,5 @@
     linssid # Wireless network scanner
     wireshark # Network protocol analyzer
     cloudflared # Cloudflare Tunnel client
-    cloudflare-warp # Cloudflare WARP client
   ];
 }
