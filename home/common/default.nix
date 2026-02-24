@@ -62,7 +62,8 @@ in
     ../../modules/home-manager/development/database
     ../../modules/home-manager/development/lsp/python
     ../../modules/home-manager/development/lsp/golang
-    ../../modules/home-manager/development/lsp/cpp
+    # ../../modules/home-manager/development/lsp/cpp
+    ../../modules/home-manager/development/virtualization/iac
     ../../modules/home-manager/development/virtualization/machines
     ../../modules/home-manager/development/virtualization/docker
     ../../modules/home-manager/development/virtualization/kubernetes

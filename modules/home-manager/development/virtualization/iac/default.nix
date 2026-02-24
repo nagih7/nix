@@ -2,10 +2,8 @@
 
 {
   home.packages = with pkgs; [
-    gcc
-    cmake
-    gnumake
-    gdb
-    clang-tools
+    terraform
+    ansible
+    vagrant
   ];
 }
