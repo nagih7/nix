@@ -108,15 +108,31 @@
           args = getSpecialArgs {
             inherit (vars) system systemVars hostVars;
           };
+          users = vars.hostVars.users or [ ];
         in
         lib.nixosSystem {
           inherit (args) system specialArgs;
           modules = [
             ./hosts/${hostName}
             agenix.nixosModules.default
+            home-manager.nixosModules.home-manager
             {
               nixpkgs.overlays = args.overlays;
               nixpkgs.config.allowUnfree = true;
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                extraSpecialArgs = builtins.removeAttrs args.specialArgs [ "userObj" ];
+                users = builtins.listToAttrs (
+                  map (userObj: {
+                    name = userObj.username;
+                    value = { ... }: {
+                      imports = [ ./home/${userObj.username} ];
+                      _module.args.userObj = userObj;
+                    };
+                  }) users
+                );
+              };
             }
           ];
         };
