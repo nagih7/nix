@@ -119,6 +119,9 @@ in
 
     # --- Developer Tools ---
     nixf = "nh search";
+
+    hdt = "hyprctl keyword debug:overlay true";
+    hdf = "hyprctl keyword debug:overlay false";
   };
 
   programs.ssh = {

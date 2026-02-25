@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-export PORT_NAME=$(xrandr | grep " connected" | head -1 | awk '{print $1}')
-export RESOLUTION=$(xrandr | grep " connected" | head -1 | awk '{print $3}' | cut -d '+' -f 1)
-export REFRESH_RATE=$(xrandr | grep -oP '\d+\.\d+(?=[*+ ])' | sort -rn | head -n 1)
 
-hyprctl keyword monitor "$PORT_NAME, ${RESOLUTION}@${REFRESH_RATE}, 0x0, 1, bitdepth, 8"
+PORT_NAME=$(hyprctl monitors -j | jq -r '.[0].name')
+MONITOR_INFO=$(hyprctl monitors -j | jq -r '.[0].availableModes | .[0]')
+
+hyprctl keyword monitor "$PORT_NAME, $MONITOR_INFO, 0x0, 1, bitdepth, 8"

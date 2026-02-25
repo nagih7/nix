@@ -50,7 +50,7 @@ let
         ["QT_QPA_PLATFORMTHEME, kde"]
         ["QT_QPA_PLATFORMTHEME, qt6ct"]
         line
-     ) processedConfig;
+      ) processedConfig;
 in
 {
   wayland.windowManager.hyprland = {
@@ -67,6 +67,12 @@ in
         "XCURSOR_SIZE, 24"
         "HYPRCURSOR_THEME, apple-cursor"
         "HYPRCURSOR_SIZE, 24"
+
+        "GTK_IM_MODULE, fcitx5"
+        "QT_IM_MODULE, fcitx5"
+        "XMODIFIERS, @im=fcitx5"
+        "INPUT_METHOD, fcitx5"
+        "SDL_IM_MODULE, fcitx5"
       ]
       ++ finalConfig;
     };
