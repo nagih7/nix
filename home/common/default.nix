@@ -59,6 +59,7 @@ in
     ../../modules/home-manager/gui/qt6ct
 
     # Development
+    ../../modules/home-manager/development/cli
     ../../modules/home-manager/development/database
     ../../modules/home-manager/development/lsp/python
     ../../modules/home-manager/development/lsp/golang

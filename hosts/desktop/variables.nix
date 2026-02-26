@@ -15,7 +15,7 @@
       443
     ];
     udp_ports = [ ];
-    trusted_interfaces = [ "tailscale0" ];
+    trusted_interfaces = [ "tailscale0" "eno1" ];
   };
   fallback_dns = [
     "1.1.1.1"
