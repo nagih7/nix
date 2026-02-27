@@ -1,5 +1,6 @@
 {
   nixConfig = "/home/nagih/Workspaces/config/nixos";
+  homeConfig = "/home/nagih/Workspaces/config/nixos/modules/home-manager";
 
   hostname = "laptop";
   cpu = "intel";

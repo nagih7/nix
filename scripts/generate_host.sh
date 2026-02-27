@@ -27,6 +27,7 @@ writer "Generating hosts/${HOSTNAME}/variables.nix..." 0.01
 cat > hosts/${HOSTNAME}/variables.nix <<EOL
 {
   nixConfig = "$(pwd)";
+  homeConfig = "$(pwd)/modules/home-manager";
 
   hostname = "${HOSTNAME}";
   cpu = "${CPU}";

@@ -128,8 +128,6 @@ in
       "$mainMod" = "SUPER";
     };
 
-    extraConfig = ''
-      ${finalConfig}
-    '';
+    extraConfig = finalConfig;
   };
 }

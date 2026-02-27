@@ -10,7 +10,9 @@ let
   rawConfig = builtins.readFile "${nagih7-dots}/tmux/.tmux.conf";
 
   finalConfig =
-    builtins.replaceStrings [ "set -g status on" ".tmux.conf" ] [ "set -g status off" "tmux.conf" ]
+    builtins.replaceStrings
+      [ "set -g status on" ".tmux.conf" "set -g @continuum-restore 'on'" ]
+      [ "set -g status off" "tmux.conf" " " ]
       rawConfig;
 in
 
@@ -21,13 +23,26 @@ in
 
     plugins = with pkgs.tmuxPlugins; [
       resurrect
-      continuum
+      # continuum
       sensible
       catppuccin
       cpu
       weather
     ];
 
-    extraConfig = finalConfig;
+    extraConfig = ''
+      ${finalConfig}
+    '';
+  };
+
+  home.packages = with pkgs; [
+    pkgs.unstable.tmuxinator
+  ];
+
+  xdg.configFile."tmuxinator".source =
+    config.lib.file.mkOutOfStoreSymlink "${hostVars.homeConfig}/features/tmux/tmuxinator";
+
+  home.shellAliases = {
+    mux = "tmuxinator";
   };
 }
