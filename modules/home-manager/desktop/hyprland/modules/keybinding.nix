@@ -54,6 +54,8 @@ let
         "bindid = Super, Super_L, Toggle search"
         "bindid = Super, Super_R, Toggle search"
         "movetoworkspacesilent"
+
+        # Screenshot
         "Ctrl,Print,"
         "$(xdg-user-dir PICTURES)"
 
@@ -89,7 +91,9 @@ let
         "# bindd = $mainMod, Tab, Toggle search"
         "# bindd = $mainMod, Tab, Toggle search"
         "movetoworkspace"
-        "Ctrl,Backspace,"
+
+        # Screenshot
+        "$mainMod Ctrl,Backspace,"
         "/home/$(whoami)/Pictures"
 
         # Media and system

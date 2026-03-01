@@ -30,9 +30,7 @@ in
       weather
     ];
 
-    extraConfig = ''
-      ${finalConfig}
-    '';
+    extraConfig = finalConfig;
   };
 
   home.packages = with pkgs; [

@@ -36,6 +36,7 @@
     pkgs.unstable.hugo
     pkgs.unstable.ngrok
     pkgs.unstable.bruno
+    pkgs.unstable.teamviewer
     (prismlauncher.override {
       jdks = [
         jdk

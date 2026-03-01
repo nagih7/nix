@@ -14,6 +14,7 @@
     vimAlias = true;
 
     plugins = with pkgs.vimPlugins; [
+      nvim-lspconfig
       nvim-treesitter-textobjects
       (nvim-treesitter.withPlugins (p: [
         p.tree-sitter-nix
@@ -65,8 +66,10 @@
     ];
   };
 
-  xdg.configFile."nvim".source =
-    config.lib.file.mkOutOfStoreSymlink "${hostVars.nixConfig}/dotfiles/nvim";
+  # xdg.configFile."nvim".source =
+  #   config.lib.file.mkOutOfStoreSymlink "${hostVars.nixConfig}/dotfiles/nvim";
+
+  xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink "/home/nagih/Workspaces/config/dotfiles/nvim";
 
   programs.zsh.shellAliases = {
     v = "nvim";
@@ -81,5 +84,8 @@
     luarocks
     glow
     github-cli
+
+    terraform-ls
+    trivy
   ];
 }
