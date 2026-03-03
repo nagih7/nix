@@ -16,6 +16,7 @@
 
     # Applications
     ../../modules/home-manager/apps/beekeeper-studio
+    ../../modules/home-manager/apps/cisco-packet-tracer
     # (pkgs.callPackage ../../modules/home-manager/build/coccoc { })
   ];
 

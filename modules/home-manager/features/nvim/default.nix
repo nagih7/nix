@@ -35,8 +35,12 @@
         p.tree-sitter-typescript
         p.tree-sitter-tsx
         p.tree-sitter-toml
+
         p.tree-sitter-gitcommit
         p.tree-sitter-gitignore
+
+        p.tree-sitter-terraform
+        p.tree-sitter-hcl
       ]))
     ];
 
@@ -69,7 +73,8 @@
   # xdg.configFile."nvim".source =
   #   config.lib.file.mkOutOfStoreSymlink "${hostVars.nixConfig}/dotfiles/nvim";
 
-  xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink "/home/nagih/Workspaces/config/dotfiles/nvim";
+  xdg.configFile."nvim".source =
+    config.lib.file.mkOutOfStoreSymlink "/home/nagih/Workspaces/config/dotfiles/nvim";
 
   programs.zsh.shellAliases = {
     v = "nvim";

@@ -19,6 +19,7 @@
       allowedTCPPorts = hostVars.firewall.tcp_ports;
       allowedUDPPorts = hostVars.firewall.udp_ports;
       trustedInterfaces = hostVars.firewall.trusted_interfaces;
+      checkReversePath = "loose";
     };
   };
 

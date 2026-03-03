@@ -3,6 +3,7 @@
 {
   home.packages = with pkgs; [
     arp-scan # Network discovery tool (Layer 2)
+    traceroute # Tracks the route taken by packets over an IP network
     nmap # Network discovery and security auditing tool (Layer 3/4)
     netplan # Network configuration tool
     dig # DNS lookup tool
