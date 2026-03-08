@@ -33,11 +33,12 @@
     pkgs.unstable.drawio
     pkgs.unstable.teams-for-linux
     pkgs.unstable.logseq
-    pkgs.unstable.rpi-imager
+    pkgs.rpi-imager
     pkgs.unstable.hugo
     pkgs.unstable.ngrok
     pkgs.unstable.bruno
     pkgs.unstable.teamviewer
+    pkgs.unstable.seafile-client
     (prismlauncher.override {
       jdks = [
         jdk
