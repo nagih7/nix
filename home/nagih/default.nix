@@ -39,6 +39,7 @@
     pkgs.unstable.bruno
     pkgs.unstable.teamviewer
     pkgs.unstable.seafile-client
+    pkgs.nodejs_24
     (prismlauncher.override {
       jdks = [
         jdk

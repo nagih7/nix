@@ -6,6 +6,7 @@
   inputs,
   systemVars,
   hostVars,
+  userObj,
   ...
 }:
 
@@ -99,6 +100,16 @@ in
     DOCUMENTS_DIR = "${config.home.homeDirectory}/Documents";
     NIX_CONFIG_DIR = "${hostVars.nixConfig}";
   };
+
+  home.file.".npmrc".text = ''
+    prefix=${config.home.homeDirectory}/.npm-global
+    cache=${config.home.homeDirectory}/.npm-cache
+    init-author-name=${userObj.username}
+    init-author-email=${userObj.email}
+    init-license=MIT
+    save-exact=true
+    package-lock=true
+  '';
 
   home.shellAliases = {
     oh = "cd ~/ && echo 'Went back home'";
