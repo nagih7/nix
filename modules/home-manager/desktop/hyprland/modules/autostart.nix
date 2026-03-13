@@ -49,9 +49,8 @@ in
       exec-once = processedEnvFiles ++ [
         # Set monitors
         "${hostVars.nixConfig}/scripts/set_monitors.sh"
-        
-        # Setup fcitx5
         "fcitx5"
+        "seafile-applet"
       ];
     };
   };

@@ -78,7 +78,7 @@ let
 
         # Application
         "Super, Return, exec, ~/.config/hypr/hyprland/scripts/launch_first_available.sh"
-        # "Super, E, exec, ~/.config/hypr/hyprland/scripts/launch_first_available.sh"
+        "Super, E, exec, ~/.config/hypr/hyprland/scripts/launch_first_available.sh"
         "Super, W, exec, ~/.config/hypr/hyprland/scripts/launch_first_available.sh"
         "Super, C, exec, ~/.config/hypr/hyprland/scripts/launch_first_available.sh"
         "Super, X, exec, ~/.config/hypr/hyprland/scripts/launch_first_available.sh"
@@ -115,7 +115,7 @@ let
 
         # Application
         "$mainMod, Space, exec, ~/.config/hypr/hyprland/scripts/launch_first_available.sh $terminal #"
-        # "$mainMod, E, exec, ~/.config/hypr/hyprland/scripts/launch_first_available.sh $fileManager #"
+        "$mainMod, E, exec, ~/.config/hypr/hyprland/scripts/launch_first_available.sh $fileManager #"
         "$mainMod, B, exec, ~/.config/hypr/hyprland/scripts/launch_first_available.sh $browser #"
         "$mainMod, C, exec, ~/.config/hypr/hyprland/scripts/launch_first_available.sh $codeEditor #"
         "$mainMod, X, exec, ~/.config/hypr/hyprland/scripts/launch_first_available.sh $note #"
