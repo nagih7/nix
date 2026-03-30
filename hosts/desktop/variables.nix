@@ -14,8 +14,12 @@
     tcp_ports = [
       80
       443
+      9757
     ];
-    udp_ports = [ ];
+    udp_ports = [
+      5353
+      9757    
+    ];
     trusted_interfaces = [ "tailscale0" "eno1" ];
   };
   fallback_dns = [

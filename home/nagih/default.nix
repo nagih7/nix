@@ -17,6 +17,7 @@
     # Applications
     ../../modules/home-manager/apps/beekeeper-studio
     ../../modules/home-manager/apps/cisco-packet-tracer
+    ../../modules/home-manager/apps/notion-repackaged
     # (pkgs.callPackage ../../modules/home-manager/build/coccoc { })
   ];
 
@@ -40,6 +41,9 @@
     pkgs.unstable.teamviewer
     pkgs.unstable.seafile-client
     pkgs.nodejs_24
+    pkgs.claude-code
+    pkgs.unstable.livecaptions
+    pkgs.unstable.notion-app-enhanced
     (prismlauncher.override {
       jdks = [
         jdk

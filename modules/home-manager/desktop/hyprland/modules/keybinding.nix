@@ -117,7 +117,7 @@ let
         "$mainMod, Space, exec, ~/.config/hypr/hyprland/scripts/launch_first_available.sh $terminal #"
         "$mainMod, E, exec, ~/.config/hypr/hyprland/scripts/launch_first_available.sh $fileManager #"
         "$mainMod, B, exec, ~/.config/hypr/hyprland/scripts/launch_first_available.sh $browser #"
-        "$mainMod, C, exec, ~/.config/hypr/hyprland/scripts/launch_first_available.sh $codeEditor #"
+        "$mainMod, C, exec, ~/.config/hypr/hyprland/scripts/launch_first_available.sh livecaptions # $codeEditor"
         "$mainMod, X, exec, ~/.config/hypr/hyprland/scripts/launch_first_available.sh $note #"
         "$mainMod, D, exec, ~/.config/hypr/hyprland/scripts/launch_first_available.sh discord #"
 

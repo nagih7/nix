@@ -68,8 +68,18 @@
         "noshadow, floating:0"
 
         # --- Force Tile for Browsers ---
-        "tile, class:^(brave)$"
         "tile, class:^(brave-browser)$"
+        
+        "workspace silent,class:^(net.sapples.LiveCaptions)$"
+        "pin,class:^(net.sapples.LiveCaptions)$"
+        "float, class:^(net.sapples.LiveCaptions)$"
+        "noshadow, class:^(net.sapples.LiveCaptions)$"
+        "noborder, class:^(net.sapples.LiveCaptions)$"
+        "rounding 16, class:^(net.sapples.LiveCaptions)$"
+        "opacity 1.0 0.85, class:^(net.sapples.LiveCaptions)$"
+
+        "noinitialfocus, class:^(net.sapples.LiveCaptions)$"
+        "stayfocused, class:^$"
       ];
 
       # ######## Layer Rules ########

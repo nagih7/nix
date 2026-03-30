@@ -5,5 +5,7 @@
     kubectl
     cilium-cli
     kubernetes-helm
+    kustomize
+    argocd
   ];
 }

@@ -51,7 +51,7 @@
 
         blur = {
           enabled = true;
-          xray = true;
+          xray = false;
           special = false;
           new_optimizations = true;
           size = 14;
@@ -63,6 +63,7 @@
           popups_ignorealpha = 0.6;
           input_methods = true;
           input_methods_ignorealpha = 0.8;
+          ignore_opacity = true
         };
 
         shadow = {

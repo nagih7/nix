@@ -34,6 +34,7 @@
   services.thermald.enable = true;
   services.power-profiles-daemon.enable = false;
   services.xserver.videoDrivers = [ hostVars.gpu ];
+  services.flatpak.enable = true;
 
   # === GPU CONFIGURATION ===
   hardware.nvidia = lib.mkIf (hostVars.gpu == "nvidia") {

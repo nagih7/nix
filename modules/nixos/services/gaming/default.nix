@@ -12,6 +12,22 @@
     gamescopeSession.enable = true; # Enable Gamescope compositor session for Steam Deck-like experience
   };
 
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;  # mDNS discovery cho Quest
+    openFirewall = true;
+  };
+
+  programs.envision.enable = true;
+
+  services.wivrn = {
+    enable = true;
+    openFirewall = true;
+    defaultRuntime = true;  # Đặt OpenXR runtime mặc định
+    autoStart = true;
+    package = pkgs.unstable.wivrn.override { cudaSupport = true; };  # ← Chỉ thay pkgs → unstable.pkgs
+  };
+
   # === GAMING PERFORMANCE OPTIMIZATION ===
   programs.gamemode.enable = true; # Enable GameMode for automatic CPU/GPU optimization during gaming
 
@@ -24,6 +40,7 @@
     winetricks # Script to install Windows components in Wine prefixes
     wineWowPackages.waylandFull # Wine version with Wayland support
     # lutris                      # Open-source gaming platform for managing and launching games
+    protonup-qt
   ];
 
   # === GAMING CONTROLLER SUPPORT ===

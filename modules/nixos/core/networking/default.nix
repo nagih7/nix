@@ -18,6 +18,7 @@
       enable = true;
       allowedTCPPorts = hostVars.firewall.tcp_ports;
       allowedUDPPorts = hostVars.firewall.udp_ports;
+      allowedTCPPortRanges = [{ from = 9757; to = 9757; }];
       trustedInterfaces = hostVars.firewall.trusted_interfaces;
       checkReversePath = "loose";
     };

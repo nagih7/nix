@@ -11,8 +11,8 @@ let
 
   finalConfig =
     builtins.replaceStrings
-      [ "set -g status on" ".tmux.conf" "set -g @continuum-restore 'on'" ]
-      [ "set -g status off" "tmux.conf" " " ]
+      [ "set -g status on" ".tmux.conf" "set -g @continuum-restore 'on'" "~/scratch/notes.md" ]
+      [ "set -g status off" "tmux.conf" " " "~/Documents/Scratch/notes.md" ]
       rawConfig;
 in
 

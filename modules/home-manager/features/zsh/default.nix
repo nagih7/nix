@@ -90,6 +90,7 @@
       gpl = "git pull";
       gs = "git status --short";
       gst = "git status";
+      gcaa = "git add . && git commit --amend --no-edit";
 
       # === TMUX WORKFLOW (Enhanced) ===
       tm = "tmux";
