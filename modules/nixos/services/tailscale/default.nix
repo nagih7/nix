@@ -8,6 +8,7 @@
     extraUpFlags = [
       "--operator=${hostVars.user.name}"
       "--accept-dns=false"
+      "--no-tpm"
     ];
   };
 }

@@ -136,26 +136,6 @@ in
     hdf = "hyprctl keyword debug:overlay false";
   };
 
-  programs.ssh = {
-    enable = true;
-    enableDefaultConfig = false;
-
-    extraConfig = ''
-      AddKeysToAgent yes
-      IdentityFile ~/.ssh/id_ed25519
-    '';
-
-    matchBlocks = {
-      "*" = {
-        forwardAgent = false;
-        serverAliveInterval = 60;
-        serverAliveCountMax = 3;
-        compression = true;
-        identitiesOnly = true;
-      };
-    };
-  };
-
   home.activation.cloneDotfiles = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [ ! -d "${dotfilesDir}" ]; then
       ${git} clone ${dotfilesRepo} "${dotfilesDir}"

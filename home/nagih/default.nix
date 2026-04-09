@@ -17,7 +17,6 @@
     # Applications
     ../../modules/home-manager/apps/beekeeper-studio
     ../../modules/home-manager/apps/cisco-packet-tracer
-    ../../modules/home-manager/apps/notion-repackaged
     # (pkgs.callPackage ../../modules/home-manager/build/coccoc { })
   ];
 
@@ -43,7 +42,11 @@
     pkgs.nodejs_24
     pkgs.claude-code
     pkgs.unstable.livecaptions
-    pkgs.unstable.notion-app-enhanced
+    pkgs.unstable.kmidimon
+    fluidsynth
+    qpwgraph
+    zed-editor
+    zerotierone
     (prismlauncher.override {
       jdks = [
         jdk
@@ -90,21 +93,13 @@
         serverAliveInterval = 60;
         serverAliveCountMax = 3;
         compression = true;
-        identitiesOnly = true;
+        identitiesOnly = false;
       };
 
       "i-* mi-*" = {
         userKnownHostsFile = "/dev/null";
         proxyCommand = "sh -c '${pkgs.awscli2}/bin/aws ssm start-session --target %h --document-name AWS-StartSSHSession --parameters \"portNumber=%p\"'";
       };
-
-      # "gitlab.nooblearn2code.com" = {
-      #   hostname = "14.225.218.83";
-      #   user = "git";
-      #   port = 222;
-      #   identityFile = "~/.ssh/id_ed25519";
-      #   identitiesOnly = true;
-      # };
     };
   };
 }
