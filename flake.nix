@@ -126,10 +126,12 @@
                 users = builtins.listToAttrs (
                   map (userObj: {
                     name = userObj.username;
-                    value = { ... }: {
-                      imports = [ ./home/${userObj.username} ];
-                      _module.args.userObj = userObj;
-                    };
+                    value =
+                      { ... }:
+                      {
+                        imports = [ ./home/${userObj.username} ];
+                        _module.args.userObj = userObj;
+                      };
                   }) users
                 );
               };

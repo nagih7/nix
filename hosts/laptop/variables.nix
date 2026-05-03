@@ -15,8 +15,14 @@
       80
       443
     ];
-    udp_ports = [ ];
-    trusted_interfaces = [ "tailscale0" "eno1" ];
+    udp_ports = [
+      9993
+      51820
+    ];
+    trusted_interfaces = [
+      "tailscale0"
+      "eno1"
+    ];
   };
   fallback_dns = [
     "1.1.1.1"

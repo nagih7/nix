@@ -18,9 +18,12 @@
     ];
     udp_ports = [
       5353
-      9757    
+      9757
     ];
-    trusted_interfaces = [ "tailscale0" "eno1" ];
+    trusted_interfaces = [
+      "tailscale0"
+      "eno1"
+    ];
   };
   fallback_dns = [
     "1.1.1.1"

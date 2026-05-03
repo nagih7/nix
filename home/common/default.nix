@@ -20,56 +20,7 @@ in
   home.stateVersion = systemVars.homeManagerVersion;
 
   imports = [
-    # Desktop
-    ../../modules/home-manager/desktop/hyprland
-    ../../modules/home-manager/desktop/hyprlock
-    ../../modules/home-manager/desktop/hypridle
-    ../../modules/home-manager/desktop/xdg-portal
-
-    # Features
-    ../../modules/home-manager/features/quickshell
-    ../../modules/home-manager/features/zsh
-    ../../modules/home-manager/features/nvim
-    ../../modules/home-manager/features/wezterm
-    ../../modules/home-manager/features/tmux
-    ../../modules/home-manager/features/git
-    ../../modules/home-manager/features/fcitx5
-    ../../modules/home-manager/features/mpv
-    ../../modules/home-manager/features/nemo
-    ../../modules/home-manager/features/fastfetch
-    ../../modules/home-manager/features/ripgrep
-    ../../modules/home-manager/features/starship
-    ../../modules/home-manager/features/cava
-    ../../modules/home-manager/features/kitty
-    ../../modules/home-manager/features/qimgv
-    ../../modules/home-manager/features/dolphin
-
-    # CLI
-    ../../modules/home-manager/features/cli/nix
-    ../../modules/home-manager/features/cli/utils
-    ../../modules/home-manager/features/cli/devtools
-
-    # GUI
-    ../../modules/home-manager/gui/cursor
-    ../../modules/home-manager/gui/fontconfig
-    ../../modules/home-manager/gui/gtk-theme
-    ../../modules/home-manager/gui/kde
-    ../../modules/home-manager/gui/kvantum
-    ../../modules/home-manager/gui/matugen
-    ../../modules/home-manager/gui/qt5ct
-    ../../modules/home-manager/gui/qt6ct
-
-    # Development
-    ../../modules/home-manager/development/cli
-    ../../modules/home-manager/development/database
-    ../../modules/home-manager/development/lsp/python
-    ../../modules/home-manager/development/lsp/golang
-    # ../../modules/home-manager/development/lsp/cpp
-    ../../modules/home-manager/development/virtualization/iac
-    ../../modules/home-manager/development/virtualization/machines
-    ../../modules/home-manager/development/virtualization/docker
-    ../../modules/home-manager/development/virtualization/kubernetes
-    ../../modules/home-manager/development/networking
+    ../../modules/home-manager
   ];
 
   programs.direnv.enable = true;

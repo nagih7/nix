@@ -45,12 +45,9 @@ let
     in
     map processLine (builtins.filter isValidLine lines);
 
-    finalConfig = map (line:
-      builtins.replaceStrings
-        ["QT_QPA_PLATFORMTHEME, kde"]
-        ["QT_QPA_PLATFORMTHEME, qt6ct"]
-        line
-      ) processedConfig;
+  finalConfig = map (
+    line: builtins.replaceStrings [ "QT_QPA_PLATFORMTHEME, kde" ] [ "QT_QPA_PLATFORMTHEME, qt6ct" ] line
+  ) processedConfig;
 in
 {
   wayland.windowManager.hyprland = {

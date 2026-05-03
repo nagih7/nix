@@ -13,10 +13,8 @@
 
   imports = [
     ../common
-
-    # Applications
-    ../../modules/home-manager/apps/beekeeper-studio
-    ../../modules/home-manager/apps/cisco-packet-tracer
+    ../../modules/home-manager/apps/beekeeper-studio.nix
+    ../../modules/home-manager/apps/cisco-packet-tracer.nix
     # (pkgs.callPackage ../../modules/home-manager/build/coccoc { })
   ];
 
@@ -29,15 +27,11 @@
     pkgs.unstable.telegram-desktop
     pkgs.unstable.slack
     pkgs.unstable.obsidian
-    pkgs.unstable.obs-studio
     pkgs.unstable.drawio
     pkgs.unstable.teams-for-linux
     pkgs.unstable.logseq
-    pkgs.rpi-imager
     pkgs.unstable.hugo
-    pkgs.unstable.ngrok
     pkgs.unstable.bruno
-    pkgs.unstable.teamviewer
     pkgs.unstable.seafile-client
     pkgs.nodejs_24
     pkgs.claude-code
@@ -46,7 +40,13 @@
     fluidsynth
     qpwgraph
     zed-editor
-    zerotierone
+    udisks
+    calibre
+    sqlite
+    qwen-code
+    awscli2
+    talosctl
+    wireguard-tools
     (prismlauncher.override {
       jdks = [
         jdk

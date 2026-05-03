@@ -69,7 +69,7 @@
 
         # --- Force Tile for Browsers ---
         "tile, class:^(brave-browser)$"
-        
+
         "workspace silent,class:^(net.sapples.LiveCaptions)$"
         "pin,class:^(net.sapples.LiveCaptions)$"
         "float, class:^(net.sapples.LiveCaptions)$"

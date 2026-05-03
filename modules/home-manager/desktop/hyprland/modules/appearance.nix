@@ -37,17 +37,6 @@
 
       decoration = {
         rounding = 18;
-        # rounding_power = 2;
-
-        # active_opacity = 1.0;
-        # inactive_opacity = 0.8;
-
-        # shadow = {
-        #   enabled = true;
-        #   range = 4;
-        #   render_power = 3;
-        #   color = "rgba(1a1a1aee)";
-        # };
 
         blur = {
           enabled = true;
@@ -63,7 +52,7 @@
           popups_ignorealpha = 0.6;
           input_methods = true;
           input_methods_ignorealpha = 0.8;
-          ignore_opacity = true
+          ignore_opacity = true;
         };
 
         shadow = {
