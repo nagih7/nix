@@ -34,6 +34,7 @@
     file
     which
     glow
+    openssl
 
     # Network & Transfer
     curl

@@ -8,6 +8,7 @@
     kubernetes-helm
     kustomize
     argocd
+    vault
   ];
 
   home.shellAliases = {

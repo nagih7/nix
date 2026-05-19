@@ -53,6 +53,29 @@
         jdk17
       ];
     })
+    (writeShellScriptBin "kfx-convert" ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+      
+      INPUT=''${1:?Usage: kfx-convert input.epub [output.kfx]}
+      OUTPUT=''${2:-"''${INPUT%.*}.kfx"}
+      
+      if [[ ! -f "$INPUT" ]]; then
+        echo "❌ File not exits: $INPUT" >&2
+        exit 1
+      fi
+      
+      echo "📚 Rendering EPUB → KFX: $INPUT → $OUTPUT"
+      
+      docker run --rm -it \
+        -v "$PWD:/app:rw" \
+        yshalsager/calibre-with-kfx \
+        "$INPUT" "$OUTPUT" \
+        --pages 0 \
+        --book 
+      
+      echo "✅ Done: $OUTPUT"
+    '')
   ];
 
   home.shellAliases = {

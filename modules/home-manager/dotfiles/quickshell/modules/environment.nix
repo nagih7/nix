@@ -3,7 +3,7 @@
 {
   # === ENVIRONMENT VARIABLES ===
   # Qt6 Configuration
-  QT_QPA_PLATFORM = "wayland";
+  QT_QPA_PLATFORM = "wayland;xcb";
   QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
   QT_SCALE_FACTOR = "1";
   QT_QUICK_CONTROLS_STYLE = "Basic";

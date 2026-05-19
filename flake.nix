@@ -26,7 +26,7 @@
     };
 
     end-4-dots = {
-      url = "git+https://github.com/end-4/dots-hyprland?submodules=1";
+      url = "git+https://github.com/nagih7/hyprland-for-nix?submodules=1&ref=nix";
       flake = false;
     };
   };

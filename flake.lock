@@ -48,19 +48,20 @@
     "end-4-dots": {
       "flake": false,
       "locked": {
-        "lastModified": 1775663012,
-        "narHash": "sha256-vymEYt0HOefheLQU1hJ/9p7PO4QWwZSpZHom/ncExhE=",
-        "ref": "refs/heads/main",
-        "rev": "fa3bf6f5df9ce678189a50a1c62878b82fd4f19d",
-        "revCount": 6145,
+        "lastModified": 1778260110,
+        "narHash": "sha256-t38mYspMVQJXcGqXOy9aa9bqCTOo6U2XKC+d3FEmp1Q=",
+        "ref": "nix",
+        "rev": "e21afab0133983387caefe5766e26b2c6dca176d",
+        "revCount": 6177,
         "submodules": true,
         "type": "git",
-        "url": "https://github.com/end-4/dots-hyprland"
+        "url": "https://github.com/nagih7/hyprland-for-nix"
       },
       "original": {
+        "ref": "nix",
         "submodules": true,
         "type": "git",
-        "url": "https://github.com/end-4/dots-hyprland"
+        "url": "https://github.com/nagih7/hyprland-for-nix"
       }
     },
     "home-manager": {
@@ -108,11 +109,11 @@
     "nagih7-dots": {
       "flake": false,
       "locked": {
-        "lastModified": 1772718450,
-        "narHash": "sha256-R6TWPO2h1KaO3/LK3mRUlTWujCQEvk4Rh3RdJpMFvEw=",
+        "lastModified": 1777864406,
+        "narHash": "sha256-16FfwYT9bWs+D5+t6gzuCSh9z0L2a3fvhKsWPNryqfU=",
         "ref": "refs/heads/main",
-        "rev": "01c24495d41c4b7cf28897c604c5b6d5b56f9c51",
-        "revCount": 13,
+        "rev": "8afed745fc44edd0063593f2b51a3d96754bbf56",
+        "revCount": 14,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/nagih7/dotfiles"
