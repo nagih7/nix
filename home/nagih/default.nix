@@ -34,7 +34,7 @@
     pkgs.unstable.bruno
     pkgs.unstable.seafile-client
     pkgs.nodejs_24
-    pkgs.claude-code
+    pkgs.unstable.claude-code
     pkgs.unstable.livecaptions
     pkgs.unstable.kmidimon
     fluidsynth

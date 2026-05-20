@@ -66,4 +66,7 @@
     powertop # Power management tool
     p11-kit # PKCS#11 module management
   ];
+
+  hardware.nvidia-container-toolkit.enable = true;
+  virtualisation.docker.enableNvidia = true;
 }

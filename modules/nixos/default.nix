@@ -16,6 +16,7 @@
     ./services/warp.nix
     ./services/tailscale.nix # Tailscale configuration for secure VPN access
     ./services/cloudflared.nix # Cloudflared configuration for secure tunneling
+    ./services/obs-studio.nix
 
     # === DESKTOP CONFIGURATION ===
     ./desktop/hyprland.nix
