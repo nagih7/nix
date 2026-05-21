@@ -31,5 +31,6 @@
     sof-firmware
     libopus
     easyeffects
+    vlc
   ];
 }

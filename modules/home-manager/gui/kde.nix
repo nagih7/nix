@@ -10,6 +10,7 @@
   home.packages = with pkgs; [
     kdePackages.kdialog
     kdePackages.dolphin
+    kdePackages.kio-extras
     python3Packages.kde-material-you-colors
   ];
 

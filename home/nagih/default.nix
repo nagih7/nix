@@ -35,6 +35,10 @@
     pkgs.unstable.seafile-client
     pkgs.nodejs_24
     pkgs.unstable.claude-code
+    pkgs.unstable.gemini-cli
+    pkgs.unstable.github-copilot-cli
+    pkgs.unstable.taskwarrior3
+    pkgs.unstable.taskwarrior-tui
     pkgs.unstable.livecaptions
     pkgs.unstable.kmidimon
     fluidsynth

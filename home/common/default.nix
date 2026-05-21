@@ -65,6 +65,7 @@ in
   home.shellAliases = {
     oh = "cd ~/ && echo 'Went back home'";
     nh = "nocorrect nh";
+    task = "nocorrect task";
 
     docs = "cd ~/Documents";
     down = "cd ~/Downloads";
