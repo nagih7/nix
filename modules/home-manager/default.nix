@@ -23,6 +23,7 @@
     ./dotfiles/kitty
     ./dotfiles/qimgv
     ./dotfiles/dolphin
+    ./dotfiles/taskwarrior
 
     # GUI
     ./gui/cursor.nix

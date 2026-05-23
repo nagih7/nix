@@ -17,10 +17,14 @@ let
       [
         "~/.config/matugen/templates"
         "version_check = false"
+        "~/.config/gtk-3.0/gtk.css"
+        "~/.config/gtk-4.0/gtk.css"
       ]
       [
         "${end-4-dots}/dots/.config/matugen/templates"
         "version_check = false\nreload_config = true"
+        "~/.config/gtk-3.0/matugen.css"
+        "~/.config/gtk-4.0/matugen.css"
       ]
       rawConfig;
 in

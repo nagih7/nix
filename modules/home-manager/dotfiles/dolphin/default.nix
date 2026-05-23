@@ -12,6 +12,8 @@ in
 {
   home.packages = with pkgs; [
     kdePackages.dolphin
+    kdePackages.kio
+    kdePackages.kio-extras
     kdePackages.breeze
     kdePackages.breeze-icons
     kdePackages.plasma-integration

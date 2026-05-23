@@ -38,6 +38,10 @@
       gtk-font-name = "JetBrainsMono Nerd Font 11";
     };
 
+    gtk3.extraCss = ''
+      @import url("matugen.css");
+    '';
+
     gtk4.extraConfig = {
       gtk-application-prefer-dark-theme = true;
       gtk-theme-name = "Catppuccin-Mocha-Compact-Blue-Dark";
@@ -45,6 +49,10 @@
       gtk-cursor-theme-name = "macOS";
       gtk-font-name = "JetBrainsMono Nerd Font 11";
     };
+
+    gtk4.extraCss = ''
+      @import url("matugen.css");
+    '';
   };
 
   # === QT THEME CONFIGURATION ===

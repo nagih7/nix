@@ -122,6 +122,7 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
+                backupFileExtension = "backup";
                 extraSpecialArgs = builtins.removeAttrs args.specialArgs [ "userObj" ];
                 users = builtins.listToAttrs (
                   map (userObj: {

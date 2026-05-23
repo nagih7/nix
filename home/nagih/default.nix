@@ -37,8 +37,8 @@
     pkgs.unstable.claude-code
     pkgs.unstable.gemini-cli
     pkgs.unstable.github-copilot-cli
-    pkgs.unstable.taskwarrior3
-    pkgs.unstable.taskwarrior-tui
+    pkgs.unstable.qwen-code
+    pkgs.unstable.codex
     pkgs.unstable.livecaptions
     pkgs.unstable.kmidimon
     fluidsynth
@@ -47,7 +47,6 @@
     udisks
     calibre
     sqlite
-    qwen-code
     awscli2
     talosctl
     wireguard-tools
