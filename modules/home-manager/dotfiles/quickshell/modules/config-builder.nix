@@ -8,8 +8,10 @@ pkgs.runCommand "quickshell-config" { } ''
 
     # === PATCH SCRIPTS FOR NIXOS ===
     
-    # 1. Fix GSettings schemas path for switchwall.sh (NixOS-safe approach)
-    sed -i '2i export XDG_DATA_DIRS=${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS' $out/ii/scripts/colors/switchwall.sh
+    # 1. Fix GSettings and Theme paths for switchwall.sh (NixOS-safe approach)
+    sed -i '2i export XDG_DATA_DIRS=${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:${pkgs.papirus-icon-theme}/share:${pkgs.catppuccin-gtk}/share:${pkgs.kdePackages.kio}/share:${pkgs.kdePackages.kservice}/share:${pkgs.kdePackages.ki18n}/share:$XDG_DATA_DIRS' $out/ii/scripts/colors/switchwall.sh
+    sed -i '3i export PATH=${pkgs.kdePackages.kdialog}/bin:${pkgs.xdg-user-dirs}/bin:${pkgs.zenity}/bin:$PATH' $out/ii/scripts/colors/switchwall.sh
+    sed -i '4i export QT_QPA_PLATFORMTHEME=qt6ct\nexport QT_STYLE_OVERRIDE=kvantum\nexport KDE_SESSION_VERSION=6' $out/ii/scripts/colors/switchwall.sh
     
     # 2. Remove unsupported matugen argument
     sed -i 's/--source-color-index 0//g' $out/ii/scripts/colors/switchwall.sh

@@ -60,6 +60,7 @@
     # === WALLPAPER & THEMING ===
     swww # Wallpaper manager
     imagemagick # Image manipulation and identification
+    zenity # File selection portal fallback
 
     # === WIDGETS & TOOLS ===
     wlogout # Logout menu
