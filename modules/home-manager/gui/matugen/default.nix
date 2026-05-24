@@ -33,6 +33,10 @@ in
     matugen
   ];
 
+  xdg.configFile."matugen/templates/kde/kde-material-you-colors-wrapper.sh" = {
+    source = "${end-4-dots}/dots/.config/matugen/templates/kde/kde-material-you-colors-wrapper.sh";
+  };
+
   xdg.configFile."matugen/config.toml".text = ''
     ${finalConfig}
 
@@ -40,6 +44,21 @@ in
     input_path = '${localTemplatePath}/cava.config'
     output_path = '~/.config/cava/config'
     post_hook = "pkill -SIGUSR2 cava 2>/dev/null || true"
+
+    [templates.tmux]
+    input_path = '${localTemplatePath}/tmux-colors.conf'
+    output_path = '~/.config/tmux/material-colors.conf'
+    # Re-source the file in every running tmux server so live sessions pick up
+    # the new palette without restart. Catches both legacy ~/.tmux/sockets and
+    # the systemd-managed default; ignores failure when no server is running.
+    post_hook = "tmux source-file ~/.config/tmux/material-colors.conf 2>/dev/null && tmux refresh-client -S 2>/dev/null || true"
+
+    [templates.wezterm]
+    input_path = '${localTemplatePath}/wezterm-colors.toml'
+    output_path = '~/.config/wezterm/colors/MaterialYou.toml'
+    # No live-reload hook: wezterm picks up the new scheme on next launch.
+    # Existing windows are already updated by the OSC sequences applycolor.sh
+    # emits to every PTS, so we don't need to disturb running terminals.
 
     # [templates.kitty]
     # input_path = '${localTemplatePath}/kitty.conf'

@@ -18,7 +18,7 @@
     settings = {
       "$qsConfig" = "ii";
       "$terminal" = "wezterm";
-      "$fileManager" = "nemo";
+      "$fileManager" = "dolphin";
       "$browser" = "zen";
       "$codeEditor" = "code";
     };

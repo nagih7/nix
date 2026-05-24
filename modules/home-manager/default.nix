@@ -15,7 +15,7 @@
     ./dotfiles/git
     ./dotfiles/fcitx5
     ./dotfiles/mpv
-    ./dotfiles/nemo
+    # ./dotfiles/nemo
     ./dotfiles/fastfetch
     ./dotfiles/ripgrep
     ./dotfiles/starship
@@ -30,10 +30,8 @@
     ./gui/fontconfig.nix
     ./gui/gtk-theme
     ./gui/kde.nix
-    ./gui/kvantum.nix
+    ./gui/qt-theme.nix
     ./gui/matugen
-    ./gui/qt5ct.nix
-    ./gui/qt6ct.nix
     ./gui/multimedia.nix
 
     # Development

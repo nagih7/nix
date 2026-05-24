@@ -13,8 +13,26 @@
   QS_CONFIG_NAME = "ii";
   QS_NO_RELOAD_POPUP = "1";
 
-  # QML Import Paths (for KDE modules)
-  QML2_IMPORT_PATH = "${pkgs.kdePackages.kirigami}/${pkgs.kdePackages.qtbase.qtQmlPrefix}";
+  # QML Import Paths — explicitly point at every Qt6 module whose QML files
+  # quickshell imports. Qt6's binary-baked default search only covers modules
+  # bundled with qtbase; out-of-tree modules (qt5compat, qtpositioning, etc.)
+  # must be listed here or `import X` fails with "module not installed".
+  QML2_IMPORT_PATH =
+    let
+      qmlSuffix = pkgs.kdePackages.qtbase.qtQmlPrefix;
+    in
+    builtins.concatStringsSep ":" [
+      "${pkgs.kdePackages.kirigami}/${qmlSuffix}"
+      "${pkgs.kdePackages.qt5compat}/${qmlSuffix}"
+      "${pkgs.kdePackages.qtpositioning}/${qmlSuffix}"
+      "${pkgs.kdePackages.qtlocation}/${qmlSuffix}"
+      "${pkgs.kdePackages.qtmultimedia}/${qmlSuffix}"
+      "${pkgs.kdePackages.qtvirtualkeyboard}/${qmlSuffix}"
+      "${pkgs.kdePackages.qtdeclarative}/${qmlSuffix}"
+      "${pkgs.kdePackages.qtquicktimeline}/${qmlSuffix}"
+      "${pkgs.kdePackages.qtsvg}/${qmlSuffix}"
+      "${pkgs.kdePackages.syntax-highlighting}/${qmlSuffix}"
+    ];
 
   # Python Configuration
   # Dynamically use the correct Python version from nixpkgs

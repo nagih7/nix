@@ -29,7 +29,12 @@ in
       weather
     ];
 
-    extraConfig = finalConfig;
+    extraConfig = finalConfig + ''
+
+      # === Material You palette override (matugen-managed) ===
+      if-shell "[ -f ~/.config/tmux/material-colors.conf ]" \
+          "source-file ~/.config/tmux/material-colors.conf"
+    '';
   };
 
   home.packages = with pkgs; [

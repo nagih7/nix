@@ -14,7 +14,6 @@
         $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.config/hypr/custom/scripts
         $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/Pictures/Wallpapers
         $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/Pictures/Screenshots
-        $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.config/matugen/templates/kde
         $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.local/state/quickshell/user/generated
         $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.config/illogical-impulse/translations
         
@@ -50,13 +49,6 @@
     SETTINGSEOF
         $DRY_RUN_CMD chmod +x ${config.home.homeDirectory}/.local/bin/qs-settings
         
-        # === KDE INTEGRATION ===
-        # Create basic KDE wrapper script for Material You colors
-        $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.config/matugen/templates/kde
-        $DRY_RUN_CMD echo '#!/usr/bin/env bash' > ${config.home.homeDirectory}/.config/matugen/templates/kde/kde-material-you-colors-wrapper.sh
-        $DRY_RUN_CMD echo '# Basic KDE Material You colors wrapper' >> ${config.home.homeDirectory}/.config/matugen/templates/kde/kde-material-you-colors-wrapper.sh
-        $DRY_RUN_CMD echo 'echo "KDE theming not fully implemented yet"' >> ${config.home.homeDirectory}/.config/matugen/templates/kde/kde-material-you-colors-wrapper.sh
-        $DRY_RUN_CMD chmod +x ${config.home.homeDirectory}/.config/matugen/templates/kde/kde-material-you-colors-wrapper.sh
         # === FIX PERMISSIONS ===
         # Ensure the state directory is writable by the user
         $DRY_RUN_CMD chown -R ${userObj.username} ${config.home.homeDirectory}/.local/state/quickshell || true

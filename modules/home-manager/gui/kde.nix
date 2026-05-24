@@ -1,6 +1,5 @@
 {
   config,
-  lib,
   pkgs,
   end-4-dots,
   ...
@@ -12,19 +11,40 @@
     kdePackages.dolphin
     kdePackages.kio-extras
     python3Packages.kde-material-you-colors
+    # Provides plasma-apply-colorscheme, which kde-material-you-colors shells
+    # out to in order to write [Colors:*] into ~/.config/kdeglobals.
+    kdePackages.plasma-workspace
   ];
 
   home.sessionVariables = {
     GTK_USE_PORTAL = "1";
   };
 
-  home.file.".config/kdeglobals" = {
-    text = lib.mkForce (
-      builtins.readFile "${end-4-dots}/dots/.config/kdeglobals"
-      + ''
-        [KDE]
-        widgetStyle=kvantum
-      ''
-    );
-  };
+  # kdeglobals is seeded once but left writable so kde-material-you-colors
+  # (invoked from matugen/templates/kde/kde-material-you-colors-wrapper.sh on
+  # each wallpaper change) can rewrite the [Colors:*] sections. Using
+  # home.file with mkForce would lock the palette to the snapshot in
+  # end-4-dots and break dynamic theming for kdialog / xdg-desktop-portal-kde.
+  home.activation.seedKdeglobals = config.lib.dag.entryAfter [ "writeBoundary" ] ''
+    target="${config.home.homeDirectory}/.config/kdeglobals"
+    if [ ! -e "$target" ] || [ -L "$target" ]; then
+      $DRY_RUN_CMD rm -f "$target"
+      $DRY_RUN_CMD install -m 0644 \
+        ${pkgs.writeText "kdeglobals-seed" (
+          builtins.readFile "${end-4-dots}/dots/.config/kdeglobals"
+          + ''
+            [KDE]
+            widgetStyle=Breeze
+          ''
+        )} "$target"
+    else
+      # In-place migrate any pre-existing kdeglobals from the prior
+      # widgetStyle=kvantum seed. plasma-apply-colorscheme only touches
+      # [Colors:*] sections, so [KDE].widgetStyle stays whatever was seeded
+      # first; without this rewrite, an existing user keeps loading Kvantum.
+      if ${pkgs.gnugrep}/bin/grep -q '^widgetStyle=kvantum$' "$target"; then
+        $DRY_RUN_CMD ${pkgs.gnused}/bin/sed -i 's/^widgetStyle=kvantum$/widgetStyle=Breeze/' "$target"
+      fi
+    fi
+  '';
 }

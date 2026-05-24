@@ -2,16 +2,15 @@
 
 {
   # === GTK THEME CONFIGURATION ===
+  # adw-gtk3 is the neutral base targeted by matugen; switchwall.sh swaps
+  # between adw-gtk3 / adw-gtk3-dark via gsettings on each wallpaper change,
+  # and matugen.css overlays the Material You palette on top.
   gtk = {
     enable = true;
 
     theme = {
-      name = "Catppuccin-Mocha-Compact-Blue-Dark";
-      package = pkgs.catppuccin-gtk.override {
-        accents = [ "blue" ];
-        size = "compact";
-        variant = "mocha";
-      };
+      name = "adw-gtk3-dark";
+      package = pkgs.adw-gtk3;
     };
 
     iconTheme = {
@@ -31,8 +30,6 @@
     };
 
     gtk3.extraConfig = {
-      gtk-application-prefer-dark-theme = true;
-      gtk-theme-name = "Catppuccin-Mocha-Compact-Blue-Dark";
       gtk-icon-theme-name = "Papirus-Dark";
       gtk-cursor-theme-name = "macOS";
       gtk-font-name = "JetBrainsMono Nerd Font 11";
@@ -43,8 +40,6 @@
     '';
 
     gtk4.extraConfig = {
-      gtk-application-prefer-dark-theme = true;
-      gtk-theme-name = "Catppuccin-Mocha-Compact-Blue-Dark";
       gtk-icon-theme-name = "Papirus-Dark";
       gtk-cursor-theme-name = "macOS";
       gtk-font-name = "JetBrainsMono Nerd Font 11";
@@ -55,15 +50,8 @@
     '';
   };
 
-  # === QT THEME CONFIGURATION ===
-  qt = {
-    enable = true;
-    platformTheme.name = "gtk";
-    style = {
-      name = "Papirus-Dark";
-      package = pkgs.papirus-icon-theme;
-    };
-  };
+  # Qt platform theme + widget style are handled by kvantum.nix (qt6ct +
+  # Kvantum MaterialAdw). Don't redeclare here.
 
   # === CUSTOM ICONS ===
   xdg.dataFile."icons/custom".source = ./icons;
