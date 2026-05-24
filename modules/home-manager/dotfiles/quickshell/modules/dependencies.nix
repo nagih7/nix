@@ -51,6 +51,11 @@
     # === AI SERVICES (OPTIONAL) ===
     ollama # Local AI models
     jq # JSON processor
+    bc # Calculator (needed for switchwall.sh)
+    libsecret # Needed for secret-tool (Gemini API)
+    glib # Needed for gsettings
+    gsettings-desktop-schemas # Fix "No schemas installed"
+    gnome-keyring # Provide org.freedesktop.secrets
 
     # === WALLPAPER & THEMING ===
     swww # Wallpaper manager

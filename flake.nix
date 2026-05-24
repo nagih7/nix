@@ -29,6 +29,11 @@
       url = "git+https://github.com/nagih7/hyprland-for-nix?submodules=1&ref=nix";
       flake = false;
     };
+    
+    zen-browser = {
+      url = "github:youwen5/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

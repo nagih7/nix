@@ -8,6 +8,8 @@
     allowUserNamespaces = true;
   };
 
+  services.gnome.gnome-keyring.enable = true;
+
   security.chromiumSuidSandbox.enable = true;
 
   boot.kernel.sysctl = {

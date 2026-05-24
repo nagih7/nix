@@ -14,6 +14,7 @@
 
   # Core system services
   services.gvfs.enable = true;
+  programs.dconf.enable = true;
 
   # Environment variables for Hyprland
   environment.sessionVariables = {
@@ -73,6 +74,8 @@
 
     # === AUDIO AND NOTIFICATIONS ===
     libnotify
+    glib # For gsettings
+    gsettings-desktop-schemas # For gsettings schemas
 
     # === UTILITIES ===
     procps # Process utilities (pidof, etc.)

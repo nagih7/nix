@@ -5,7 +5,21 @@ pkgs.runCommand "quickshell-config" { } ''
     # Copy base config from upstream GitHub repo
     cp -r ${end-4-dots}/dots/.config/quickshell $out
     chmod -R u+w $out
+
+    # === PATCH SCRIPTS FOR NIXOS ===
     
+    # 1. Fix GSettings schemas path for switchwall.sh (NixOS-safe approach)
+    sed -i '2i export XDG_DATA_DIRS=${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS' $out/ii/scripts/colors/switchwall.sh
+    
+    # 2. Remove unsupported matugen argument
+    sed -i 's/--source-color-index 0//g' $out/ii/scripts/colors/switchwall.sh
+    
+    # 3. Fix kill usage in applycolor.sh
+    sed -i 's/kill -SIGUSR1 $(pidof kitty)/pkill -SIGUSR1 kitty || true/g' $out/ii/scripts/colors/applycolor.sh
+    
+    # 4. Silence Python warnings in generate_colors_material.py
+    sed -i '1i import warnings; warnings.filterwarnings("ignore")' $out/ii/scripts/colors/generate_colors_material.py
+
     # Create symlink qs -> . inside ii to allow resolving qs.* modules
     # This enables 'qs.*' imports to work correctly
     ln -s . $out/ii/qs

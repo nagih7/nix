@@ -2,6 +2,7 @@
   config,
   pkgs,
   userObj,
+  inputs,
   ...
 }:
 
@@ -19,7 +20,7 @@
   ];
 
   home.packages = with pkgs; [
-    pkgs.unstable.brave
+    inputs.zen-browser.packages.${pkgs.system}.default
     pkgs.unstable.discord
     pkgs.unstable.spotify
     pkgs.unstable.vscode

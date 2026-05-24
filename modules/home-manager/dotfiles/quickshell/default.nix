@@ -4,6 +4,7 @@
   quickshell,
   hostVars,
   end-4-dots,
+  userObj,
   ...
 }:
 
@@ -15,7 +16,7 @@ let
   sessionVariables = import ./modules/environment.nix { inherit config pkgs; };
 
   # Activation scripts
-  activationScripts = import ./modules/activation.nix { inherit config pkgs end-4-dots; };
+  activationScripts = import ./modules/activation.nix { inherit config pkgs end-4-dots userObj; };
 in
 
 {

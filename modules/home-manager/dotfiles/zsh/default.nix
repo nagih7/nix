@@ -195,13 +195,6 @@
         eza --icons --group-directories-first
       }
 
-      # === DEVELOPMENT ENVIRONMENT VARIABLES ===
-      export EDITOR="nvim"
-      export VISUAL="nvim"
-      export BROWSER="brave"
-      export TERMINAL="wezterm"
-      export MANPAGER="nvim +Man!"
-
       # === PERFORMANCE OPTIMIZATIONS ===
       export HISTFILE="$HOME/.zsh_history"
       export HISTSIZE=50000

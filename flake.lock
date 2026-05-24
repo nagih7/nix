@@ -48,11 +48,11 @@
     "end-4-dots": {
       "flake": false,
       "locked": {
-        "lastModified": 1778260110,
-        "narHash": "sha256-t38mYspMVQJXcGqXOy9aa9bqCTOo6U2XKC+d3FEmp1Q=",
+        "lastModified": 1779550920,
+        "narHash": "sha256-NLF0xFLtfH4a3R7HUI6WlhZ6IE12wu9BfXNye1AnW9E=",
         "ref": "nix",
-        "rev": "e21afab0133983387caefe5766e26b2c6dca176d",
-        "revCount": 6177,
+        "rev": "2b83e6de22121d48e5d7c987e185db5b303ff0b4",
+        "revCount": 6179,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/nagih7/hyprland-for-nix"
@@ -109,11 +109,11 @@
     "nagih7-dots": {
       "flake": false,
       "locked": {
-        "lastModified": 1777864406,
-        "narHash": "sha256-16FfwYT9bWs+D5+t6gzuCSh9z0L2a3fvhKsWPNryqfU=",
+        "lastModified": 1779522340,
+        "narHash": "sha256-dbEJkvvz3RuZ10IEyhDOiVRyRKccti788REvajk4lSs=",
         "ref": "refs/heads/main",
-        "rev": "8afed745fc44edd0063593f2b51a3d96754bbf56",
-        "revCount": 14,
+        "rev": "9e394cda82cbe2f60f90c9b037df5ba5033bc35a",
+        "revCount": 15,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/nagih7/dotfiles"
@@ -184,7 +184,8 @@
         "nagih7-dots": "nagih7-dots",
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",
-        "quickshell": "quickshell"
+        "quickshell": "quickshell",
+        "zen-browser": "zen-browser"
       }
     },
     "systems": {
@@ -199,6 +200,26 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "zen-browser": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1778822459,
+        "narHash": "sha256-hJlFMK7Es783KU/mhLEGC+xim/EqBMVdbsWgthquo6Y=",
+        "owner": "youwen5",
+        "repo": "zen-browser-flake",
+        "rev": "90d4d395e2be09b2d314816dadd34660528c4ee4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "youwen5",
+        "repo": "zen-browser-flake",
         "type": "github"
       }
     }

@@ -2,6 +2,7 @@
   config,
   pkgs,
   end-4-dots,
+  userObj,
 }:
 
 {
@@ -52,14 +53,17 @@
         # === KDE INTEGRATION ===
         # Create basic KDE wrapper script for Material You colors
         $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.config/matugen/templates/kde
-        cat > ${config.home.homeDirectory}/.config/matugen/templates/kde/kde-material-you-colors-wrapper.sh << 'EOF'
-    #!/bin/bash
-    # Basic KDE Material You colors wrapper
-    echo "KDE theming not fully implemented yet"
-    EOF
+        $DRY_RUN_CMD echo '#!/usr/bin/env bash' > ${config.home.homeDirectory}/.config/matugen/templates/kde/kde-material-you-colors-wrapper.sh
+        $DRY_RUN_CMD echo '# Basic KDE Material You colors wrapper' >> ${config.home.homeDirectory}/.config/matugen/templates/kde/kde-material-you-colors-wrapper.sh
+        $DRY_RUN_CMD echo 'echo "KDE theming not fully implemented yet"' >> ${config.home.homeDirectory}/.config/matugen/templates/kde/kde-material-you-colors-wrapper.sh
         $DRY_RUN_CMD chmod +x ${config.home.homeDirectory}/.config/matugen/templates/kde/kde-material-you-colors-wrapper.sh
+        # === FIX PERMISSIONS ===
+        # Ensure the state directory is writable by the user
+        $DRY_RUN_CMD chown -R ${userObj.username} ${config.home.homeDirectory}/.local/state/quickshell || true
+        $DRY_RUN_CMD chmod -R u+rw ${config.home.homeDirectory}/.local/state/quickshell || true
 
         # === DEFAULT WALLPAPER ===
+
         if [ ! -f "${config.home.homeDirectory}/Pictures/Wallpapers/default.png" ]; then
           $DRY_RUN_CMD cp -f ${end-4-dots}/dots/.config/quickshell/ii/assets/images/default_wallpaper.png \
             ${config.home.homeDirectory}/Pictures/Wallpapers/default.png

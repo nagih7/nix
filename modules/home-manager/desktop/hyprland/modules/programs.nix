@@ -19,7 +19,7 @@
       "$qsConfig" = "ii";
       "$terminal" = "wezterm";
       "$fileManager" = "nemo";
-      "$browser" = "brave";
+      "$browser" = "zen";
       "$codeEditor" = "code";
     };
   };
