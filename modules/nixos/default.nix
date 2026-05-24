@@ -17,6 +17,7 @@
     ./services/tailscale.nix # Tailscale configuration for secure VPN access
     ./services/cloudflared.nix # Cloudflared configuration for secure tunneling
     ./services/obs-studio.nix
+    ./services/hermes-agent
 
     # === DESKTOP CONFIGURATION ===
     ./desktop/hyprland.nix

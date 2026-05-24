@@ -66,6 +66,7 @@ in
     oh = "cd ~/ && echo 'Went back home'";
     nh = "nocorrect nh";
     task = "nocorrect task";
+    sops = "nocorrect sops";
 
     docs = "cd ~/Documents";
     down = "cd ~/Downloads";

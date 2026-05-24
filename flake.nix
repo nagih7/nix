@@ -19,6 +19,11 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     nagih7-dots = {
       url = "git+https://github.com/nagih7/dotfiles?submodules=1";
@@ -34,6 +39,11 @@
       url = "github:youwen5/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    
+    nix-hermes = {
+      url = "github:nagih7/nix-hermes-agent";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -44,6 +54,7 @@
       home-manager,
       quickshell,
       agenix,
+      sops-nix,
       nagih7-dots,
       end-4-dots,
       ...
@@ -121,6 +132,8 @@
             ./hosts/${hostName}
             agenix.nixosModules.default
             home-manager.nixosModules.home-manager
+            sops-nix.nixosModules.sops
+            inputs.nix-hermes.nixosModules.hermes-agent
             {
               nixpkgs.overlays = args.overlays;
               nixpkgs.config.allowUnfree = true;

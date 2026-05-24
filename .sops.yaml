@@ -1,0 +1,10 @@
+keys:
+  - &desktop age1klxm7ndvtnyu93pvpdy2kklkaezj6tm4jq93cty7sqcr6verm36s3dsn4e
+  - &nagih-desktop age1nekrs35ws5fvkqq9u55uh5yvkzxf5zf0cy9jfmzkz4va2emyycrqs6k9az
+
+creation_rules:
+  - path_regex: secrets/.*\.yaml$
+    key_groups:
+      - age:
+          - *desktop
+          - *nagih-desktop

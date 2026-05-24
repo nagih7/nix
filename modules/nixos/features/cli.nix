@@ -55,5 +55,10 @@
     bash-completion
     coreutils
     woeusb-ng
+
+    # Security
+    age
+    ssh-to-age
+    sops
   ];
 }

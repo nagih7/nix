@@ -50,5 +50,7 @@ in
 
     # === USER ACCOUNT CONFIGURATION ===
     users.users = builtins.listToAttrs (map mkUserConfig hostVars.users);
+
+    sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
   };
 }
