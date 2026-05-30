@@ -35,6 +35,7 @@
     pkgs.unstable.bruno
     pkgs.unstable.seafile-client
     pkgs.nodejs_24
+    pkgs.yarn
     pkgs.unstable.claude-code
     pkgs.unstable.gemini-cli
     pkgs.unstable.github-copilot-cli
