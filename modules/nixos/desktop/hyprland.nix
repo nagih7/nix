@@ -10,6 +10,7 @@
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
+    withUWSM = true;
   };
 
   # Core system services
@@ -51,7 +52,6 @@
     # swaynotificationcenter disabled - quickshell handles notifications
 
     # === VISUAL AND AUDIO ===
-    swww # Wallpaper daemon
     brightnessctl # Brightness control
     ddcutil # DDC/CI monitor control
     pavucontrol # PulseAudio volume control

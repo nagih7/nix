@@ -69,14 +69,13 @@ pkgs.buildFHSEnv {
       xdg-utils
 
       # X11
-      xorg.libX11
+      libx11
       xorg.libXScrnSaver
       xorg.libXcomposite
       xorg.libXcursor
       xorg.libXdamage
       xorg.libXext
       xorg.libXfixes
-      xorg.libXi
       xorg.libXrandr
       xorg.libXrender
       xorg.libXtst

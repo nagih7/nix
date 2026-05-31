@@ -46,4 +46,8 @@
 
   # Virtual Environment Path
   ILLOGICAL_IMPULSE_VIRTUAL_ENV = "${config.home.homeDirectory}/.local/state/quickshell/.venv";
+
+  # Flatpak data dirs — set via home.sessionVariables so the shell expands
+  # $XDG_DATA_DIRS at login time (unlike hl.env() which sets literal strings).
+  XDG_DATA_DIRS = "$HOME/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:$XDG_DATA_DIRS";
 }

@@ -3,6 +3,7 @@
 {
   home.packages = with pkgs; [
     fastfetch
+    hyfetch
   ];
 
   xdg.configFile."fastfetch".source = ./config;

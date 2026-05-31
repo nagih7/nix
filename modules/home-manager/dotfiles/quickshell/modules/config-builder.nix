@@ -107,6 +107,9 @@ pkgs.runCommand "quickshell-config" { } ''
   singleton Wallpapers 1.0 Wallpapers.qml
   singleton Weather 1.0 Weather.qml
   singleton Ydotool 1.0 Ydotool.qml
+  singleton GoogleCloud 1.0 GoogleCloud.qml
+  singleton HyprlandAntiFlashbangShader 1.0 HyprlandAntiFlashbangShader.qml
+  singleton HyprlandConfig 1.0 HyprlandConfig.qml
 
   # Non-singleton types
   BooruResponseData 1.0 BooruResponseData.qml

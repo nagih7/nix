@@ -52,6 +52,7 @@
     awscli2
     talosctl
     wireguard-tools
+    jellyfin
     (prismlauncher.override {
       jdks = [
         jdk

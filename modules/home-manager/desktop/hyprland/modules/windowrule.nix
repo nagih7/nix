@@ -5,6 +5,11 @@
 # ╚███╔███╔╝██║██║ ╚████║██████╔╝╚██████╔╝╚███╔███╔╝██║  ██║╚██████╔╝███████╗███████╗
 #  ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝╚═════╝  ╚═════╝  ╚══╝╚══╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚══════╝
 #------------------------------------------------------------------------------------
+#
+# Hyprland 0.55 Lua config (configType = "lua").
+# settings.window_rule/layer_rule/workspace_rule each render to hl.<name>({...}).
+# Match conditions live under `match`; `float`/`fullscreen` ARE valid match keys
+# in Lua (unlike the hyprlang shim), so the floating-based rules work again.
 
 { config, pkgs, ... }:
 
@@ -14,127 +19,121 @@
 
     settings = {
       # ######## Workspace Rules ########
-      workspace = [
-        "special:special, gapsout:15"
+      workspace_rule = [
+        { workspace = "special:special"; gaps_out = 15; }
       ];
 
-      # ######## Window Rules V2 ########
-      windowrulev2 = [
+      # ######## Window Rules ########
+      window_rule = [
         # --- Disable Blur ---
-        "noblur, class:^$, title:^$"
-        # "noblur, class:.*"
+        { match = { class = "^$"; title = "^$"; }; no_blur = true; }
 
         # --- Floating & Center (General) ---
-        "float, title:^(Open File|Select a File|Choose wallpaper|Open Folder|Save As|Library|File Upload|.*wants to save|.*wants to open)$"
-        "center, title:^(Open File|Select a File|Choose wallpaper|Open Folder|Save As|Library|File Upload|.*wants to save|.*wants to open)$"
+        { match.title = "^(Open File|Select a File|Choose wallpaper|Open Folder|Save As|Library|File Upload|.*wants to save|.*wants to open)$"; float = true; }
+        { match.title = "^(Open File|Select a File|Choose wallpaper|Open Folder|Save As|Library|File Upload|.*wants to save|.*wants to open)$"; center = true; }
 
         # --- Specific Sizes ---
-        "size 60% 65%, title:^(Choose wallpaper)$"
-        "float, class:^(org\\.freedesktop\\.impl\\.portal\\.desktop\\.kde)$"
-        "size 60% 65%, class:^(org\\.freedesktop\\.impl\\.portal\\.desktop\\.kde)$"
+        { match.title = "^(Choose wallpaper)$"; size = "60% 65%"; }
+        { match.class = "^(org\\.freedesktop\\.impl\\.portal\\.desktop\\.kde)$"; float = true; }
+        { match.class = "^(org\\.freedesktop\\.impl\\.portal\\.desktop\\.kde)$"; size = "60% 65%"; }
 
         # --- System Tools (Pavucontrol, Network, Bluetooth) ---
-        "float, class:^(pavucontrol|org\\.pulseaudio\\.pavucontrol|nm-connection-editor|blueberry\\.py|guifetch|bluedevilwizard)$"
-        "size 45% 45%, class:^(pavucontrol|org\\.pulseaudio\\.pavucontrol|nm-connection-editor|Zotero)$"
-        "center, class:^(pavucontrol|org\\.pulseaudio\\.pavucontrol|nm-connection-editor)$"
-        "float, class:^(Zotero)$"
+        { match.class = "^(pavucontrol|org\\.pulseaudio\\.pavucontrol|nm-connection-editor|blueberry\\.py|guifetch|bluedevilwizard)$"; float = true; }
+        { match.class = "^(pavucontrol|org\\.pulseaudio\\.pavucontrol|nm-connection-editor|Zotero)$"; size = "45% 45%"; }
+        { match.class = "^(pavucontrol|org\\.pulseaudio\\.pavucontrol|nm-connection-editor)$"; center = true; }
+        { match.class = "^(Zotero)$"; float = true; }
 
         # --- KDE Plasma Specifics ---
-        "float, class:^(plasma-changeicons|kcm_.*|.*plasmawindowed.*)$"
-        "move 999999 999999, class:^(plasma-changeicons)$"
-        "noinitialfocus, class:^(plasma-changeicons)$"
-        "float, title:^(.*Welcome|illogical-impulse Settings|.*Shell conflicts.*)$"
-        "move 40 80, title:^(Copying — Dolphin)$"
+        { match.class = "^(plasma-changeicons|kcm_.*|.*plasmawindowed.*)$"; float = true; }
+        { match.class = "^(plasma-changeicons)$"; move = "999999 999999"; }
+        { match.class = "^(plasma-changeicons)$"; no_initial_focus = true; }
+        { match.title = "^(.*Welcome|illogical-impulse Settings|.*Shell conflicts.*)$"; float = true; }
+        { match.title = "^(Copying — Dolphin)$"; move = "40 80"; }
 
         # --- Tiling Overrides ---
-        "tile, class:^(dev\\.warp\\.Warp)$"
+        { match.class = "^(dev\\.warp\\.Warp)$"; tile = true; }
 
         # --- Picture-in-Picture (PiP) ---
-        "float, title:^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$"
-        "keepaspectratio, title:^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$"
-        "move 73% 72%, title:^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$"
-        "size 25% 25%, title:^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$"
-        "pin, title:^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$"
+        { match.title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$"; float = true; }
+        { match.title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$"; keep_aspect_ratio = true; }
+        { match.title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$"; move = "73% 72%"; }
+        { match.title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$"; size = "25% 25%"; }
+        { match.title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$"; pin = true; }
 
         # --- Tearing & Games ---
-        "immediate, title:.*\\.exe"
-        "immediate, title:.*minecraft.*"
-        "immediate, class:^(steam_app).*"
+        { match.title = ".*\\.exe"; immediate = true; }
+        { match.title = ".*minecraft.*"; immediate = true; }
+        { match.class = "^(steam_app).*"; immediate = true; }
 
-        # --- Fix Jetbrains IDEs ---
-        "noinitialfocus, class:^(jetbrains-.*)$, floating:1, title:^($|^\\s$|^win\\d+$)"
+        # --- Fix Jetbrains IDEs (float match regained in Lua) ---
+        { match = { class = "^(jetbrains-.*)$"; float = true; title = "^($|^\\s$|^win\\d+$)"; }; no_initial_focus = true; }
 
-        # --- No shadow for tiled windows ---
-        "noshadow, floating:0"
+        # --- No shadow for tiled windows (float = false, regained in Lua) ---
+        { match.float = false; no_shadow = true; }
 
         # --- Force Tile for Browsers ---
-        "tile, class:^(brave-browser)$"
+        { match.class = "^(brave-browser)$"; tile = true; }
 
-        "workspace silent,class:^(net.sapples.LiveCaptions)$"
-        "pin,class:^(net.sapples.LiveCaptions)$"
-        "float, class:^(net.sapples.LiveCaptions)$"
-        "noshadow, class:^(net.sapples.LiveCaptions)$"
-        "noborder, class:^(net.sapples.LiveCaptions)$"
-        "rounding 16, class:^(net.sapples.LiveCaptions)$"
-        "opacity 1.0 0.85, class:^(net.sapples.LiveCaptions)$"
+        # --- LiveCaptions ---
+        { match.class = "^(net.sapples.LiveCaptions)$"; workspace = "silent"; }
+        { match.class = "^(net.sapples.LiveCaptions)$"; pin = true; }
+        { match.class = "^(net.sapples.LiveCaptions)$"; float = true; }
+        { match.class = "^(net.sapples.LiveCaptions)$"; no_shadow = true; }
+        { match.class = "^(net.sapples.LiveCaptions)$"; border_size = 0; }
+        { match.class = "^(net.sapples.LiveCaptions)$"; rounding = 16; }
+        { match.class = "^(net.sapples.LiveCaptions)$"; opacity = "1.0 0.85"; }
+        { match.class = "^(net.sapples.LiveCaptions)$"; no_initial_focus = true; }
 
-        "noinitialfocus, class:^(net.sapples.LiveCaptions)$"
-        "stayfocused, class:^$"
+        { match.class = "^$"; stay_focused = true; }
       ];
 
       # ######## Layer Rules ########
-      layerrule = [
+      layer_rule = [
         # --- General ---
-        "xray, .*"
-        "noanim, ^(walker|selection|overview|anyrun|indicator.*|osk|hyprpicker|noanim|gtk4-layer-shell)$"
-        "blur, ^(logout_dialog)$" # Đã thêm lại cái này
+        { match.namespace = ".*"; xray = true; }
+        { match.namespace = "^(walker|selection|overview|anyrun|indicator.*|osk|hyprpicker|noanim|gtk4-layer-shell)$"; no_anim = true; }
+        { match.namespace = "^(logout_dialog)$"; blur = true; }
 
         # --- Blur & Opacity (General) ---
-        "blur, ^(gtk-layer-shell|launcher|notifications)$"
-        "ignorealpha 0, ^(gtk-layer-shell)$"
-        "ignorealpha 0.5, ^(launcher)$"
-        "ignorealpha 0.69, ^(notifications)$"
+        { match.namespace = "^(gtk-layer-shell|launcher|notifications)$"; blur = true; }
+        { match.namespace = "^(gtk-layer-shell)$"; ignore_alpha = 0; }
+        { match.namespace = "^(launcher)$"; ignore_alpha = 0.5; }
+        { match.namespace = "^(notifications)$"; ignore_alpha = 0.69; }
 
         # --- AGS / Bar / Dock ---
-        "blur, ^(session[0-9]*|bar[0-9]*|dock[0-9]*|overview[0-9]*|barcorner.*|cheatsheet[0-9]*|sideright[0-9]*|sideleft[0-9]*|indicator.*|osk[0-9]*)$"
-        "ignorealpha 0.6, ^(bar[0-9]*|dock[0-9]*|overview[0-9]*|barcorner.*|cheatsheet[0-9]*|sideright[0-9]*|sideleft[0-9]*|indicator.*|osk[0-9]*)$"
+        { match.namespace = "^(session[0-9]*|bar[0-9]*|dock[0-9]*|overview[0-9]*|barcorner.*|cheatsheet[0-9]*|sideright[0-9]*|sideleft[0-9]*|indicator.*|osk[0-9]*)$"; blur = true; }
+        { match.namespace = "^(bar[0-9]*|dock[0-9]*|overview[0-9]*|barcorner.*|cheatsheet[0-9]*|sideright[0-9]*|sideleft[0-9]*|indicator.*|osk[0-9]*)$"; ignore_alpha = 0.6; }
 
         # --- AGS Animations ---
-        "animation slide left, ^(sideleft.*)$"
-        "animation slide right, ^(sideright.*)$"
+        { match.namespace = "^(sideleft.*)$"; animation = "slide left"; }
+        { match.namespace = "^(sideright.*)$"; animation = "slide right"; }
 
-        # ######## Quickshell Rules (Chi tiết từng dòng) ########
+        # ######## Quickshell Rules ########
+        { match.namespace = "^(quickshell:.*)$"; blur_popups = true; }
+        { match.namespace = "^(quickshell:.*)$"; blur = true; }
+        { match.namespace = "^(quickshell:.*)$"; ignore_alpha = 0.79; }
 
-        # 1. General Quickshell
-        "blurpopups, ^(quickshell:.*)$"
-        "blur, ^(quickshell:.*)$"
-        "ignorealpha 0.79, ^(quickshell:.*)$"
+        { match.namespace = "^(quickshell:(bar|verticalBar|reloadPopup))$"; animation = "slide"; }
+        { match.namespace = "^(quickshell:(cheatsheet|dock|osk))$"; animation = "slide bottom"; }
+        { match.namespace = "^(quickshell:screenCorners)$"; animation = "popin 120%"; }
+        { match.namespace = "^(quickshell:notificationPopup)$"; animation = "fade"; }
+        { match.namespace = "^(quickshell:wallpaperSelector)$"; animation = "slide top"; }
+        { match.namespace = "^(quickshell:sidebarRight)$"; animation = "slide right"; }
+        { match.namespace = "^(quickshell:sidebarLeft)$"; animation = "slide left"; }
 
-        # 2. Animations
-        "animation slide, ^(quickshell:(bar|verticalBar|reloadPopup))$"
-        "animation slide bottom, ^(quickshell:(cheatsheet|dock|osk))$"
-        "animation popin 120%, ^(quickshell:screenCorners)$"
-        "animation fade, ^(quickshell:notificationPopup)$"
-        "animation slide top, ^(quickshell:wallpaperSelector)$"
-        "animation slide right, ^(quickshell:sidebarRight)$"
-        "animation slide left, ^(quickshell:sidebarLeft)$"
+        { match.namespace = "^(quickshell:(actionCenter|lockWindowPusher|overlay|overview|polkit|regionSelector|screenshot|wNotificationCenter|wOnScreenDisplay|wStartMenu))$"; no_anim = true; }
 
-        # 3. No Animations
-        "noanim, ^(quickshell:(actionCenter|lockWindowPusher|overlay|overview|polkit|regionSelector|screenshot|wNotificationCenter|wOnScreenDisplay|wStartMenu))$"
+        { match.namespace = "^(quickshell:session)$"; no_anim = true; }
+        { match.namespace = "^(quickshell:session)$"; blur = true; }
+        { match.namespace = "^(quickshell:session)$"; ignore_alpha = 0; }
 
-        # 4. Special Cases (Alpha & Overlay) - Đây là phần logic phức tạp bro cần
-        "noanim, ^(quickshell:session)$"
-        "blur, ^(quickshell:session)$"
-        "ignorealpha 0, ^(quickshell:session)$" # Cái này quan trọng, set về 0
+        { match.namespace = "^(quickshell:wTaskView)$"; no_anim = true; }
+        { match.namespace = "^(quickshell:wTaskView)$"; ignore_alpha = 0; }
 
-        "noanim, ^(quickshell:wTaskView)$"
-        "ignorealpha 0, ^(quickshell:wTaskView)$" # Cái này cũng về 0
+        { match.namespace = "^(quickshell:(overlay|popup|mediaControls))$"; ignore_alpha = 1; }
+        { match.namespace = "^(quickshell:popup)$"; xray = false; } # Fix weird color
 
-        "ignorealpha 1, ^(quickshell:(overlay|popup|mediaControls))$"
-        "xray 0, ^(quickshell:popup)$" # Fix weird color
-
-        # 5. Ordering
-        "order -1, ^(quickshell:osk)$"
+        { match.namespace = "^(quickshell:osk)$"; order = -1; }
       ];
     };
   };
