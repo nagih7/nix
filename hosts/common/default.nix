@@ -50,5 +50,12 @@ in
 
     # === USER ACCOUNT CONFIGURATION ===
     users.users = builtins.listToAttrs (map mkUserConfig hostVars.users);
+
+    nix.settings = {
+      substituters = [
+        "https://cache.nixos.org"
+        "https://mirrors.bfsu.edu.cn/nix-chan"
+      ];
+    };
   };
 }

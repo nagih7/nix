@@ -48,10 +48,10 @@
     "end-4-dots": {
       "flake": false,
       "locked": {
-        "lastModified": 1780247219,
-        "narHash": "sha256-pnr4dhk8YpAR2GoqxT30wkq4SOxmybXhXA+nmjvbKLA=",
+        "lastModified": 1780250284,
+        "narHash": "sha256-mc8uRQZ9XD3Pxr+n1jq3lEQ7ACxtCBtgl1FmfWbhPrE=",
         "ref": "nix",
-        "rev": "4b05eff3fe1941e9aa0023aa5296a25a70ff62f7",
+        "rev": "3f2bd0640e02847937fa3f4108113d41ccc5011b",
         "revCount": 6187,
         "submodules": true,
         "type": "git",
@@ -109,11 +109,11 @@
     "nagih7-dots": {
       "flake": false,
       "locked": {
-        "lastModified": 1779522340,
-        "narHash": "sha256-dbEJkvvz3RuZ10IEyhDOiVRyRKccti788REvajk4lSs=",
+        "lastModified": 1780426623,
+        "narHash": "sha256-Ad7h95X2UClKSSk0vzKMIo93cHlfKq16l89uss2aBfM=",
         "ref": "refs/heads/main",
-        "rev": "9e394cda82cbe2f60f90c9b037df5ba5033bc35a",
-        "revCount": 15,
+        "rev": "b3f63e5ab4b73788d4e0a905306122ac42b24045",
+        "revCount": 16,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/nagih7/dotfiles"

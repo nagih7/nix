@@ -20,12 +20,6 @@ let
 in
 {
   wayland.windowManager.hyprland = {
-    # Keyboard has physical Alt and Win keys swapped at firmware level:
-    # physical Win → Mod1 (Alt), physical Alt → Mod4 (Super).
-    # Swap them back so Win = Super and Alt = Alt.
-    extraConfig = dotConfig + ''
-
-      hl.config({input = {kb_options = "altwin:swap_lalt_lwin"}})
-    '';
+    extraConfig = dotConfig;
   };
 }
