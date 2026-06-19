@@ -2,11 +2,12 @@
   config,
   pkgs,
   hostVars,
+  nagih7-dots,
   ...
 }:
 
 {
-  # Cấu hình Neovim: Sử dụng symlink trực tiếp từ dotfiles để linh hoạt (NvChad/LazyVim)
+  # Cấu hình Neovim: Dùng flake input nagih7-dots (github:nagih7/dotfiles) thay vì local symlink.
   # Cài đặt Neovim qua home.packages thay vì programs.neovim để tránh xung đột file init.lua
   home.packages = with pkgs; [
     neovim
@@ -45,9 +46,9 @@
     trivy
   ];
 
-  # Symlink toàn bộ thư mục nvim từ dotfiles ra ngoài store (Mutable config)
-  xdg.configFile."nvim".source =
-    config.lib.file.mkOutOfStoreSymlink "${hostVars.nixConfig}/dotfiles/nvim";
+  # Dùng flake input: lazy-lock.json được đặt trong stdpath("data") để writable.
+  # Để update plugin: push dotfiles → nix flake update nagih7-dots → nixos-rebuild switch.
+  xdg.configFile."nvim".source = "${nagih7-dots}/nvim";
 
   programs.zsh.shellAliases = {
     v = "nvim";

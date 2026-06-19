@@ -30,9 +30,9 @@
     pkgs.unstable.obsidian
     pkgs.unstable.drawio
     pkgs.unstable.teams-for-linux
-    pkgs.unstable.logseq
     pkgs.unstable.hugo
     pkgs.unstable.bruno
+    pkgs.unstable.google-chrome
     pkgs.unstable.seafile-client
     pkgs.nodejs_24
     pkgs.yarn

@@ -17,6 +17,10 @@
   services.gvfs.enable = true;
   programs.dconf.enable = true;
 
+  # Without this, /etc/pam.d/hyprlock doesn't exist and hyprlock silently
+  # falls back to /etc/pam.d/su, which uses a different (and wrong) auth stack.
+  security.pam.services.hyprlock = { };
+
   # Environment variables for Hyprland
   environment.sessionVariables = {
     XDG_CURRENT_DESKTOP = "Hyprland";
