@@ -48,11 +48,11 @@
     "end-4-dots": {
       "flake": false,
       "locked": {
-        "lastModified": 1781877985,
-        "narHash": "sha256-ZGGb2mPLKdF9GFsRkCkSUrKNmQPJuR6TbBTwxdBCp7U=",
+        "lastModified": 1784258519,
+        "narHash": "sha256-qLp0bphubeh1XhXVcj2CBp1GMYIovRG6Nlw2NofHRIo=",
         "ref": "nix",
-        "rev": "a15e13e40c94c7063f954e6527036cad424fdab3",
-        "revCount": 6189,
+        "rev": "5d92b52d58c00b50b2472e765c1d774dccc15b2f",
+        "revCount": 6190,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/nagih7/hyprland-for-nix"

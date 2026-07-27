@@ -33,6 +33,8 @@ let
         "docker" # Docker container management
         "lp"
         "bluetooth"
+        "tailscale"
+        "wg"
       ];
       shell = pkgs.zsh; # Default shell (zsh)
     };
@@ -59,3 +61,4 @@ in
     };
   };
 }
+

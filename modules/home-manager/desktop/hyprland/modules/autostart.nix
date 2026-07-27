@@ -58,7 +58,6 @@ let
       # Set monitors
       "${hostVars.nixConfig}/scripts/set_monitors.sh"
       "fcitx5"
-      "seafile-applet"
     ]
   );
 

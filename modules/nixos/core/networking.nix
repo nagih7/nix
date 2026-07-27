@@ -31,8 +31,17 @@
 
   # Disable NSCD (Name Service Cache Daemon) to avoid conflicts
   services.nscd.enable = false;
-  services.netclient.enable = true;
 
   # Force empty NSS modules (often done to fix specific glibc/flake issues)
   system.nssModules = lib.mkForce [ ];
+
+  systemd.services.NetworkManager-wait-online = {
+    enable = true;
+  };
+  
+  # Ensure DNS target is reached before NM activates autoconnect VPNs
+  systemd.services."nm-dispatcher" = {
+    after = [ "network-online.target" "nss-lookup.target" ];
+    wants = [ "network-online.target" ];
+  };
 }

@@ -28,12 +28,10 @@
     pkgs.unstable.telegram-desktop
     pkgs.unstable.slack
     pkgs.unstable.obsidian
-    pkgs.unstable.drawio
     pkgs.unstable.teams-for-linux
     pkgs.unstable.hugo
     pkgs.unstable.bruno
     pkgs.unstable.google-chrome
-    pkgs.unstable.seafile-client
     pkgs.nodejs_24
     pkgs.yarn
     pkgs.unstable.claude-code
@@ -52,7 +50,13 @@
     awscli2
     talosctl
     wireguard-tools
+    wireguard-ui
     jellyfin
+    syncplay
+    unrar
+    vlc
+    drawio
+    omnissa-horizon-client
     (prismlauncher.override {
       jdks = [
         jdk
@@ -117,6 +121,13 @@
     '';
 
     matchBlocks = {
+      "devbox" = {
+        hostname = "10.10.60.10";
+        user = "nagih";
+        port = 22;
+        identityFile = "~/.ssh/id_ed25519";
+      };
+
       "*" = {
         forwardAgent = false;
         serverAliveInterval = 60;
