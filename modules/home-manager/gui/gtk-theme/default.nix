@@ -47,6 +47,18 @@
 
     gtk4.extraCss = ''
       @import url("matugen.css");
+
+      /* LiveCaptions: strip the GTK theme's default window background so the
+         app's own transparent-mode CSS (rgba black) is not obscured, and
+         force white text with shadow for contrast on any wallpaper. */
+      window.transparent-mode {
+          background-color: transparent;
+          background: transparent;
+      }
+      window.transparent-mode label {
+          color: white;
+          text-shadow: 0 1px 6px rgba(0, 0, 0, 1), 0 0 16px rgba(0, 0, 0, 0.8);
+      }
     '';
   };
 

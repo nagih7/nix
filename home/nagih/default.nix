@@ -56,6 +56,7 @@
     unrar
     vlc
     drawio
+    virt-viewer
     omnissa-horizon-client
     (prismlauncher.override {
       jdks = [
