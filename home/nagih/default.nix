@@ -95,7 +95,6 @@
     nix-config = "cd /home/nagih/Workspaces/config/nixos";
 
     # === CODE EDITOR WORKFLOW (Enhanced) ===
-    code = "cursor";
     idea = "idea-community";
 
     # === DEVELOPMENT SHORTCUTS ===
