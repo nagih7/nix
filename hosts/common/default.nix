@@ -33,6 +33,8 @@ let
         "docker" # Docker container management
         "lp"
         "bluetooth"
+        "tailscale"
+        "wg"
       ];
       shell = pkgs.zsh; # Default shell (zsh)
     };
@@ -50,5 +52,13 @@ in
 
     # === USER ACCOUNT CONFIGURATION ===
     users.users = builtins.listToAttrs (map mkUserConfig hostVars.users);
+
+    nix.settings = {
+      substituters = [
+        "https://cache.nixos.org"
+        "https://mirrors.bfsu.edu.cn/nix-chan"
+      ];
+    };
   };
 }
+

@@ -31,14 +31,17 @@ let
         ''
           local config = wezterm.config_builder()
 
-          -- Auto-reload when matugen rewrites the MaterialYou color scheme
-          -- (on wallpaper change OR /light /dark switch). The reload re-applies
-          -- our dark-only scheme, undoing any OSC color sequences that
-          -- applycolor.sh broadcasts to /dev/pts/* — without this, live wezterm
-          -- windows would briefly show light-mode term colors before the user
-          -- closes/reopens.
+          -- Reload when matugen rewrites the MaterialYou color scheme (wallpaper change
+          -- or /light /dark switch). Re-applies the dark-only scheme, overriding any
+          -- OSC sequences applycolor.sh sent to /dev/pts/*.
           wezterm.add_to_config_reload_watch_list(
               os.getenv("HOME") .. "/.config/wezterm/colors/MaterialYou.toml"
+          )
+          -- Also reload when switchwall.sh updates the wallpaper path. matugen writes
+          -- path.txt (wallpaper template) before MaterialYou.toml (wezterm template),
+          -- so both files are ready before the reload fires.
+          wezterm.add_to_config_reload_watch_list(
+              os.getenv("HOME") .. "/.local/state/quickshell/user/generated/wallpaper/path.txt"
           )''
       ]
       rawConfig;

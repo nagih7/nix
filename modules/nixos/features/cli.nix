@@ -12,7 +12,7 @@
     # System Monitoring & Info
     htop
     btop
-    neofetch
+
     lshw
     pciutils
     usbutils

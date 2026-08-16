@@ -16,7 +16,7 @@
 }:
 
 let
-  dotConfig = builtins.readFile "${end-4-dots}/dots/.config/hypr/hyprland/keybinds.conf";
+  dotConfig = builtins.readFile "${end-4-dots}/dots/.config/hypr/hyprland/keybinds.lua";
 in
 {
   wayland.windowManager.hyprland = {

@@ -27,7 +27,7 @@ let
         libGL
         vulkan-loader
         libglvnd
-        xorg.libX11
+        libx11
       ];
   };
 

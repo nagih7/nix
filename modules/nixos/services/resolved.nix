@@ -3,12 +3,14 @@
 {
   services.resolved = {
     enable = true;
-    dnssec = "allow-downgrade";
-    domains = [ "~." ];
-    fallbackDns = hostVars.fallback_dns;
-    extraConfig = ''
-      DNSOverTLS=opportunistic
-      MulticastDNS=yes
-    '';
+    settings = {
+      Resolve = {
+        DNSSEC = "allow-downgrade";
+        Domains = [ "~." ];
+        FallbackDNS = hostVars.fallback_dns; # Giữ nguyên biến của bạn
+        DNSOverTLS = "opportunistic";
+        MulticastDNS = "yes";
+      };
+    };
   };
 }

@@ -18,7 +18,7 @@
     openFirewall = true;
   };
 
-  programs.envision.enable = true;
+  # programs.envision.enable = true;
 
   services.wivrn = {
     enable = true;
@@ -37,7 +37,7 @@
     pkgs.unstable.steam-run # Utility for running non-Steam applications with Steam's runtime
     # winePackages.stable         # Stable Wine version for running Windows games/applications
     winetricks # Script to install Windows components in Wine prefixes
-    wineWowPackages.waylandFull # Wine version with Wayland support
+    wineWow64Packages.waylandFull # Wine version with Wayland support
     protonup-qt
   ];
 

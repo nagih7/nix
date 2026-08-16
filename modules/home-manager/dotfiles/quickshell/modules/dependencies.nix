@@ -29,7 +29,7 @@
     kdePackages.systemsettings # System settings
     kdePackages.kirigami # Kirigami framework for QML
     kdePackages.kirigami-addons # Additional Kirigami components
-    libsForQt5.kirigami2 # Kirigami2 for Qt5 compatibility
+    kdePackages.kirigami # Kirigami2 for Qt5 compatibility
 
     # === QT6 FRAMEWORK ===
     qt6.qtbase
@@ -58,7 +58,7 @@
     gnome-keyring # Provide org.freedesktop.secrets
 
     # === WALLPAPER & THEMING ===
-    swww # Wallpaper manager
+    awww # Wallpaper manager
     imagemagick # Image manipulation and identification
     zenity # File selection portal fallback
 
@@ -67,5 +67,6 @@
     swappy # Screenshot editor
     grim # Screenshot utility
     slurp # Area selection utility
+    fuzzel # App launcher (fallback when quickshell IPC unavailable)
   ];
 }

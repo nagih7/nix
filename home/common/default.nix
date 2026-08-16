@@ -10,11 +10,6 @@
   ...
 }:
 
-let
-  git = "${pkgs.git}/bin/git";
-  dotfilesRepo = "https://github.com/nagih7/dotfiles.git";
-  dotfilesDir = "${hostVars.nixConfig}/dotfiles";
-in
 {
   programs.home-manager.enable = true;
   home.stateVersion = systemVars.homeManagerVersion;
@@ -88,19 +83,4 @@ in
     hdf = "hyprctl keyword debug:overlay false";
   };
 
-  home.activation.cloneDotfiles = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    if [ ! -d "${dotfilesDir}" ]; then
-      ${git} clone ${dotfilesRepo} "${dotfilesDir}"
-    else
-      cd "${dotfilesDir}"
-      ${git} fetch origin main
-      
-      LOCAL=$(${git} rev-parse @)
-      REMOTE=$(${git} rev-parse @{u})
-      
-      if [ $LOCAL != $REMOTE ]; then
-        ${git} pull
-      fi
-    fi
-  '';
 }

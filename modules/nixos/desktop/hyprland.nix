@@ -10,11 +10,16 @@
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
+    withUWSM = true;
   };
 
   # Core system services
   services.gvfs.enable = true;
   programs.dconf.enable = true;
+
+  # Without this, /etc/pam.d/hyprlock doesn't exist and hyprlock silently
+  # falls back to /etc/pam.d/su, which uses a different (and wrong) auth stack.
+  security.pam.services.hyprlock = { };
 
   # Environment variables for Hyprland
   environment.sessionVariables = {
@@ -51,7 +56,6 @@
     # swaynotificationcenter disabled - quickshell handles notifications
 
     # === VISUAL AND AUDIO ===
-    swww # Wallpaper daemon
     brightnessctl # Brightness control
     ddcutil # DDC/CI monitor control
     pavucontrol # PulseAudio volume control

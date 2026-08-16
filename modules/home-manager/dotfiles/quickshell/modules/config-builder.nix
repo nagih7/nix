@@ -13,9 +13,74 @@ pkgs.runCommand "quickshell-config" { } ''
     sed -i '3i export PATH=${pkgs.kdePackages.kdialog}/bin:${pkgs.xdg-user-dirs}/bin:${pkgs.zenity}/bin:$PATH' $out/ii/scripts/colors/switchwall.sh
     sed -i '4i export QT_QPA_PLATFORMTHEME=kde\nexport KDE_SESSION_VERSION=6' $out/ii/scripts/colors/switchwall.sh
     
-    # 2. Remove unsupported matugen argument
-    sed -i 's/--source-color-index 0//g' $out/ii/scripts/colors/switchwall.sh
-    
+    # 2. Add --source-color-index 0 to matugen image calls.
+    #    matugen 4.x shows an interactive color picker when given an image and
+    #    no source-color-index; without a tty it fails with "IO error: not a
+    #    terminal". Index 0 (dominant color) auto-selects without interaction.
+    sed -i 's|matugen_args+=(image "\$imgpath")|matugen_args+=(image "\$imgpath" --source-color-index 0)|g' $out/ii/scripts/colors/switchwall.sh
+    sed -i 's|matugen_args+=(image "\$thumbnail")|matugen_args+=(image "\$thumbnail" --source-color-index 0)|g' $out/ii/scripts/colors/switchwall.sh
+
+    # 3a. Rewrite scheme_for_image.py to use Pillow+NumPy instead of cv2
+    # (cv2/opencv is not available on NixOS without extra setup, but Pillow
+    # and NumPy are already in PYTHONPATH from the session environment).
+    cat > $out/ii/scripts/colors/scheme_for_image.py << 'PYEOF'
+#!/usr/bin/env python3
+# Rewritten for NixOS: uses PIL (available in PYTHONPATH) instead of cv2.
+# numpy has a glibc version mismatch with the venv Python, so pure-Python
+# statistics are used for the Hasler-Süsstrunk colorfulness metric.
+import sys
+import math
+import statistics
+from PIL import Image
+
+def image_colorfulness(img):
+    pixels = list(img.getdata())
+    rg = [abs(r - g)             for r, g, b in pixels]
+    yb = [abs(0.5*(r + g) - b)  for r, g, b in pixels]
+    n = len(pixels)
+    mean_rg = sum(rg) / n
+    mean_yb = sum(yb) / n
+    std_rg  = statistics.pstdev(rg)
+    std_yb  = statistics.pstdev(yb)
+    return math.sqrt(std_rg**2 + std_yb**2) + 0.3 * math.sqrt(mean_rg**2 + mean_yb**2)
+
+def pick_scheme(colorfulness):
+    return "scheme-neutral" if colorfulness < 40 else "scheme-tonal-spot"
+
+def load_and_resize_image(img_path, max_dim=128):
+    try:
+        img = Image.open(img_path).convert("RGB")
+    except Exception:
+        return None
+    w, h = img.size
+    if max(w, h) > max_dim:
+        scale = max_dim / max(w, h)
+        img = img.resize((max(1, int(w * scale)), max(1, int(h * scale))), Image.LANCZOS)
+    return img
+
+def main():
+    colorfulness_mode = False
+    args = sys.argv[1:]
+    if "--colorfulness" in args:
+        colorfulness_mode = True
+        args.remove("--colorfulness")
+    if len(args) < 1:
+        print("scheme-tonal-spot")
+        sys.exit(1)
+    img = load_and_resize_image(args[0])
+    if img is None:
+        print("scheme-tonal-spot")
+        sys.exit(1)
+    colorfulness = image_colorfulness(img)
+    if colorfulness_mode:
+        print(f"{colorfulness}")
+    else:
+        print(pick_scheme(colorfulness))
+
+if __name__ == "__main__":
+    main()
+PYEOF
+
     # 3. Fix kill usage in applycolor.sh
     sed -i 's/kill -SIGUSR1 $(pidof kitty)/pkill -SIGUSR1 kitty || true/g' $out/ii/scripts/colors/applycolor.sh
     
@@ -57,7 +122,7 @@ pkgs.runCommand "quickshell-config" { } ''
   ii.sidebarRight 1.0 sidebarRight/
   ii.verticalBar 1.0 verticalBar/
   ii.wallpaperSelector 1.0 wallpaperSelector/
-  EOF
+EOF
 
     # Services qmldir - defines all singleton services
     cat > $out/ii/services/qmldir << 'EOF'
@@ -107,10 +172,13 @@ pkgs.runCommand "quickshell-config" { } ''
   singleton Wallpapers 1.0 Wallpapers.qml
   singleton Weather 1.0 Weather.qml
   singleton Ydotool 1.0 Ydotool.qml
+  singleton GoogleCloud 1.0 GoogleCloud.qml
+  singleton HyprlandAntiFlashbangShader 1.0 HyprlandAntiFlashbangShader.qml
+  singleton HyprlandConfig 1.0 HyprlandConfig.qml
 
   # Non-singleton types
   BooruResponseData 1.0 BooruResponseData.qml
-  EOF
+EOF
 
     # Shapes qmldir - for material design shapes module
     if [ -d "$out/ii/modules/common/widgets/shapes" ]; then
@@ -122,7 +190,7 @@ pkgs.runCommand "quickshell-config" { } ''
   geometry 1.0 geometry/
   graphics 1.0 graphics/
   shapes 1.0 shapes/
-  EOF
+EOF
     fi
 
     # === PATCH SHELL.QML ===
@@ -183,7 +251,7 @@ pkgs.runCommand "quickshell-config" { } ''
 
       // WaffleFamily disabled: requires org.kde.kirigami which is not available in Qt6
   }
-  SHELLEOF
+SHELLEOF
 
     # === CREATE SETTINGS LAUNCHER SERVICE ===
     cat > $out/ii/services/SettingsLauncher.qml << 'SERVICEEOF'
@@ -196,7 +264,7 @@ pkgs.runCommand "quickshell-config" { } ''
           Quickshell.execDetached(["env", "-u", "QS_CONFIG_NAME", "quickshell", "--path", Quickshell.shellPath("settings.qml")]);
       }
   }
-  SERVICEEOF
+SERVICEEOF
 
     # === PATCH FILES TO USE SETTINGS LAUNCHER ===
     # Patch SidebarRightContent.qml to use SettingsLauncher instead of direct qs call

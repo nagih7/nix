@@ -56,9 +56,10 @@ in
     [templates.wezterm]
     input_path = '${localTemplatePath}/wezterm-colors.toml'
     output_path = '~/.config/wezterm/colors/MaterialYou.toml'
-    # No live-reload hook: wezterm picks up the new scheme on next launch.
-    # Existing windows are already updated by the OSC sequences applycolor.sh
-    # emits to every PTS, so we don't need to disturb running terminals.
+    # Touch the file after writing to guarantee an inotify IN_MODIFY event even
+    # when matugen uses an atomic rename (which fires IN_MOVED_TO, missed by some
+    # file watchers). WezTerm's add_to_config_reload_watch_list then picks it up.
+    post_hook = "touch ~/.config/wezterm/colors/MaterialYou.toml 2>/dev/null || true"
 
     # [templates.kitty]
     # input_path = '${localTemplatePath}/kitty.conf'
