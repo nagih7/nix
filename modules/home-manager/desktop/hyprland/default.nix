@@ -9,7 +9,6 @@
 {
   config,
   pkgs,
-  end-4-dots,
   ...
 }:
 
@@ -25,10 +24,10 @@
   ];
 
   xdg.configFile = {
-    "hypr/hyprland/scripts".source = "${end-4-dots}/dots/.config/hypr/hyprland/scripts";
+    "hypr/hyprland/scripts".source = config.custom.desktopShell.hyprland.scriptsDir;
 
     # keybinds.conf (hyprlang format) is read by quickshell's get_keybinds.py
     # cheatsheet parser — provide it alongside the Lua config.
-    "hypr/hyprland/keybinds.conf".source = "${end-4-dots}/dots/.config/hypr/hyprland/keybinds.conf";
+    "hypr/hyprland/keybinds.conf".source = config.custom.desktopShell.hyprland.keybindsConfFile;
   };
 }

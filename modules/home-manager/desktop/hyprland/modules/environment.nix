@@ -8,15 +8,10 @@
 
 {
   config,
-  lib,
-  pkgs,
-  end-4-dots,
   ...
 }:
 
 let
-  dotConfig = builtins.readFile "${end-4-dots}/dots/.config/hypr/hyprland/env.lua";
-
   # Lua mode: each env var is a two-argument hl.env(KEY, VALUE) call.
   mkEnv = key: value: { _args = [ key value ]; };
 in
@@ -45,6 +40,6 @@ in
         # session value and hiding Papirus icons. Use home.sessionVariables.
       ];
     };
-    extraConfig = dotConfig;
+    extraConfig = config.custom.desktopShell.hyprland.envConfig;
   };
 }

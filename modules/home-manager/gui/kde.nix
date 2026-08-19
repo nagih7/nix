@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  end-4-dots,
   ...
 }:
 
@@ -23,15 +22,15 @@
   # kdeglobals is seeded once but left writable so kde-material-you-colors
   # (invoked from matugen/templates/kde/kde-material-you-colors-wrapper.sh on
   # each wallpaper change) can rewrite the [Colors:*] sections. Using
-  # home.file with mkForce would lock the palette to the snapshot in
-  # end-4-dots and break dynamic theming for kdialog / xdg-desktop-portal-kde.
+  # home.file with mkForce would lock the palette to the shell provider's
+  # snapshot and break dynamic theming for kdialog / xdg-desktop-portal-kde.
   home.activation.seedKdeglobals = config.lib.dag.entryAfter [ "writeBoundary" ] ''
     target="${config.home.homeDirectory}/.config/kdeglobals"
     if [ ! -e "$target" ] || [ -L "$target" ]; then
       $DRY_RUN_CMD rm -f "$target"
       $DRY_RUN_CMD install -m 0644 \
         ${pkgs.writeText "kdeglobals-seed" (
-          builtins.readFile "${end-4-dots}/dots/.config/kdeglobals"
+          config.custom.desktopShell.kde.kdeglobalsSeed
           + ''
             [KDE]
             widgetStyle=Breeze

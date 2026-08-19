@@ -8,19 +8,12 @@
 
 {
   config,
-  lib,
-  pkgs,
-  hostVars,
-  end-4-dots,
   ...
 }:
 
-let
-  dotConfig = builtins.readFile "${end-4-dots}/dots/.config/hypr/hyprland/keybinds.lua";
-in
 {
   wayland.windowManager.hyprland = {
     enable = true;
-    extraConfig = dotConfig;
+    extraConfig = config.custom.desktopShell.hyprland.keybindsConfig;
   };
 }

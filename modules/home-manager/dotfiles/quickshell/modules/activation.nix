@@ -1,7 +1,7 @@
 {
   config,
+  lib,
   pkgs,
-  end-4-dots,
   userObj,
 }:
 
@@ -55,10 +55,11 @@
         $DRY_RUN_CMD chmod -R u+rw ${config.home.homeDirectory}/.local/state/quickshell || true
 
         # === DEFAULT WALLPAPER ===
-
-        if [ ! -f "${config.home.homeDirectory}/Pictures/Wallpapers/default.png" ]; then
-          $DRY_RUN_CMD cp -f ${end-4-dots}/dots/.config/quickshell/ii/assets/images/default_wallpaper.png \
-            ${config.home.homeDirectory}/Pictures/Wallpapers/default.png
-        fi
+        ${lib.optionalString (config.custom.desktopShell.quickshell.wallpaperSeed != null) ''
+          if [ ! -f "${config.home.homeDirectory}/Pictures/Wallpapers/default.png" ]; then
+            $DRY_RUN_CMD cp -f ${config.custom.desktopShell.quickshell.wallpaperSeed} \
+              ${config.home.homeDirectory}/Pictures/Wallpapers/default.png
+          fi
+        ''}
   '';
 }

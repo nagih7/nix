@@ -1,5 +1,9 @@
 {
   imports = [
+    # Desktop shell (must come before the desktop/dotfiles modules that
+    # read config.custom.desktopShell)
+    ./desktop-shell
+
     # Desktop
     ./desktop/hyprland
     ./desktop/hyprlock

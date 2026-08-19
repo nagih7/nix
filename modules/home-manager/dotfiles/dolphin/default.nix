@@ -2,13 +2,9 @@
   config,
   pkgs,
   lib,
-  end-4-dots,
   ...
 }:
 
-let
-  rawConfig = builtins.readFile "${end-4-dots}/dots/.config/dolphinrc";
-in
 {
   home.packages = with pkgs; [
     kdePackages.dolphin
@@ -20,10 +16,8 @@ in
     kdePackages.qqc2-desktop-style
   ];
 
-  # xdg.configFile."dolphinrc".source = config.lib.file.mkOutOfStoreSymlink "${end-4-dots}/dots/.config/dolphinrc";
-
   home.activation.configureDolphin = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    SRC="${end-4-dots}/dots/.config/dolphinrc"
+    SRC="${config.custom.desktopShell.dolphin.rcPath}"
     DEST="${config.xdg.configHome}/dolphinrc"
 
     # Chỉ copy nếu file nguồn thay đổi hoặc file đích chưa tồn tại

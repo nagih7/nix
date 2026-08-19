@@ -36,173 +36,89 @@
     };
   };
 
-  outputs =
-    {
-      self,
-      nixpkgs,
-      nixpkgs-unstable,
-      home-manager,
-      quickshell,
-      agenix,
-      nagih7-dots,
-      end-4-dots,
-      ...
-    }@inputs:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, agenix, ... }@inputs:
     let
       lib = nixpkgs.lib;
 
-      # --- HOST DISCOVERY ---
-      shouldInclude = name: type: type == "directory" && name != "common";
-      hostsDir = ./hosts;
-      hostNames = lib.attrNames (lib.filterAttrs shouldInclude (builtins.readDir hostsDir));
-
-      supportedSystems = [
-        "x86_64-linux"
-        "aarch64-linux"
-      ];
-      forAllSystems = lib.genAttrs supportedSystems;
-
-      # --- VARIABLE & ARGUMENT HELPERS ---
-      getVars =
-        hostName:
+      mkMachine = hostName: userName:
         let
           systemVars = import ./variables.nix;
           hostVars = import ./hosts/${hostName}/variables.nix;
           system = "${systemVars.isa}-${systemVars.os}";
-        in
-        {
-          inherit system systemVars hostVars;
-        };
 
-      getSpecialArgs =
-        {
-          system,
-          systemVars,
-          hostVars,
-          userObj ? null,
-        }:
-        let
+          userObj = lib.findFirst (u: u.username == userName) 
+            (throw "User ${userName} not found in ${hostName}/variables.nix") 
+            (hostVars.users or [ ]);
+
           unstable-overlay = final: prev: {
             unstable = import nixpkgs-unstable {
               inherit system;
               config.allowUnfree = true;
             };
           };
-        in
-        {
-          inherit system;
-          overlays = [ unstable-overlay ];
-          specialArgs = {
-            inherit
-              inputs
-              quickshell
-              systemVars
-              hostVars
-              nagih7-dots
-              end-4-dots
-              ;
-            inherit userObj;
-          };
-        };
-
-      # --- BUILDER FUNCTIONS ---
-      mkHost =
-        hostName:
-        let
-          vars = getVars hostName;
-          args = getSpecialArgs {
-            inherit (vars) system systemVars hostVars;
-          };
-          users = vars.hostVars.users or [ ];
-        in
-        lib.nixosSystem {
-          inherit (args) system specialArgs;
-          modules = [
-            ./hosts/${hostName}
-            agenix.nixosModules.default
-            home-manager.nixosModules.home-manager
-            {
-              nixpkgs.overlays = args.overlays;
-              nixpkgs.config.allowUnfree = true;
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                backupFileExtension = "backup";
-                extraSpecialArgs = builtins.removeAttrs args.specialArgs [ "userObj" ];
-                users = builtins.listToAttrs (
-                  map (userObj: {
-                    name = userObj.username;
-                    value =
-                      { ... }:
-                      {
-                        imports = [ ./home/${userObj.username} ];
-                        _module.args.userObj = userObj;
-                      };
-                  }) users
-                );
-              };
-            }
-          ];
-        };
-
-      mkHome =
-        hostName: userObj:
-        let
-          vars = getVars hostName;
-          args = getSpecialArgs {
-            inherit (vars) system systemVars hostVars;
-            inherit userObj;
-          };
 
           pkgs = import nixpkgs {
-            inherit (args) system;
+            inherit system;
             config.allowUnfree = true;
-            overlays = args.overlays;
+            overlays = [ unstable-overlay ];
           };
-        in
-        home-manager.lib.homeManagerConfiguration {
-          inherit pkgs;
-          extraSpecialArgs = args.specialArgs;
 
-          modules = [
-            ./home/${userObj.username}
-          ];
+          customArgs = {
+            inherit inputs systemVars hostVars hostName userName userObj;
+            inherit (inputs) quickshell agenix nagih7-dots end-4-dots zen-browser;
+          };
+
+        in {
+          nixos = lib.nixosSystem {
+            inherit system;
+            specialArgs = customArgs;
+            modules = [
+              ./hosts/${hostName}
+              ./modules/nixos/default.nix
+              agenix.nixosModules.default
+              {
+                nixpkgs.overlays = [ unstable-overlay ];
+                nixpkgs.config.allowUnfree = true;
+              }
+            ];
+          };
+
+          # --- HOME CONFIGURATION ---
+          home = home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+            extraSpecialArgs = customArgs;
+            modules = [
+              ./home/${userName}/default.nix
+              ./modules/home-manager/default.nix
+            ];
+          };
         };
 
-      # --- CONFIG GENERATION LOGIC ---
-      homeConfigsList = lib.foldl' (
-        acc: hostName:
-        let
-          vars = getVars hostName;
-          users = vars.hostVars.users or [ ];
-          userConfigs = builtins.listToAttrs (
-            map (userObj: {
-              name = userObj.username;
-              value = mkHome hostName userObj;
-            }) users
-          );
-        in
-        acc // userConfigs
-      ) { } hostNames;
+      desktop = mkMachine "desktop" "nagih";
+      laptop  = mkMachine "laptop" "nagih";
 
-    in
-    {
-      nixosConfigurations = lib.genAttrs hostNames mkHost;
-      homeConfigurations = homeConfigsList;
+    in {
+      nixosConfigurations = {
+        desktop = desktop.nixos;
+        laptop  = laptop.nixos;
+      };
 
-      devShells = forAllSystems (
-        system:
+      homeConfigurations = {
+        "nagih@desktop" = desktop.home;
+        "nagih@laptop"  = laptop.home;
+      };
+
+      devShells = lib.genAttrs [ "x86_64-linux" "aarch64-linux" ] ( system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
         in
         {
           default = pkgs.mkShell {
-            buildInputs = with pkgs; [
-              nixos-rebuild
-              home-manager
-              git
-              just
-              sops
+            buildInputs = [
+              pkgs.nixos-rebuild
+              home-manager.packages.${system}.home-manager
+              pkgs.just
+              pkgs.sops
             ];
           };
         }

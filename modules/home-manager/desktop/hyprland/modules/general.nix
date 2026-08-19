@@ -8,18 +8,11 @@
 
 {
   config,
-  lib,
-  pkgs,
-  hostVars,
-  end-4-dots,
   ...
 }:
 
-let
-  dotConfig = builtins.readFile "${end-4-dots}/dots/.config/hypr/hyprland/general.lua";
-in
 {
   wayland.windowManager.hyprland = {
-    extraConfig = dotConfig;
+    extraConfig = config.custom.desktopShell.hyprland.generalConfig;
   };
 }

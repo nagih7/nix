@@ -10,7 +10,7 @@
   QT_QUICK_FLICKABLE_WHEEL_DECELERATION = "10000";
 
   # QuickShell Configuration
-  QS_CONFIG_NAME = "ii";
+  QS_CONFIG_NAME = config.custom.desktopShell.name;
   QS_NO_RELOAD_POPUP = "1";
 
   # QML Import Paths — explicitly point at every Qt6 module whose QML files

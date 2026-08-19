@@ -9,14 +9,12 @@
 {
   config,
   lib,
-  pkgs,
   hostVars,
-  end-4-dots,
   ...
 }:
 
 let
-  rawConfig = builtins.readFile "${end-4-dots}/dots/.config/hypr/hyprland/execs.conf";
+  rawConfig = config.custom.desktopShell.hyprland.execsConf;
 
   # Remove the plain "qs -c $qsConfig &" from execs.conf so we can replace it
   # with a wrapper that re-sources /etc/set-environment first. This ensures
@@ -47,7 +45,7 @@ let
     in
     map processLine (builtins.filter isValidLine lines);
 
-  qsConfig = "ii";
+  qsConfig = config.custom.desktopShell.name;
 
   # All autostart commands; substitute the hyprlang $qsConfig var (no Lua vars).
   allExecs = map (lib.replaceStrings [ "$qsConfig" ] [ qsConfig ]) (

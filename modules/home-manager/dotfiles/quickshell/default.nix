@@ -1,22 +1,18 @@
 {
   config,
+  lib,
   pkgs,
   quickshell,
-  hostVars,
-  end-4-dots,
   userObj,
   ...
 }:
 
 let
-  # Build customized quickshell configuration
-  quickshellConfig = import ./modules/config-builder.nix { inherit pkgs end-4-dots; };
-
   # Environment variables
   sessionVariables = import ./modules/environment.nix { inherit config pkgs; };
 
   # Activation scripts
-  activationScripts = import ./modules/activation.nix { inherit config pkgs end-4-dots userObj; };
+  activationScripts = import ./modules/activation.nix { inherit config lib pkgs userObj; };
 in
 
 {
@@ -26,7 +22,7 @@ in
   ];
 
   # === QUICKSHELL CONFIGURATION ===
-  xdg.configFile."quickshell".source = quickshellConfig;
+  xdg.configFile."quickshell".source = config.custom.desktopShell.quickshell.configSource;
 
   # === ENVIRONMENT VARIABLES ===
   home.sessionVariables = sessionVariables;
