@@ -17,24 +17,14 @@ let
         "wheel" # Enable sudo
         "networkmanager" # Manage network connections
         "audio" # Access audio devices
-        "realtime" # Real-time scheduling
         "video" # Access video devices
         "input" # Access input devices
-        "storage" # Access storage devices
-        "optical" # Access optical drives
-        "scanner" # Access scanners
         "systemd-journal" # Read system logs
         "disk" # Disk management access
-        "adbusers" # D-Bus access
-        "plugdev" # Hotplug devices
-        "gaming" # Gaming optimizations
         "libvirtd" # Libvirt virtualization
         "kvm" # Kernel-based Virtual Machine
         "docker" # Docker container management
         "lp"
-        "bluetooth"
-        "tailscale"
-        "wg"
       ];
       shell = pkgs.zsh; # Default shell (zsh)
     };
@@ -56,9 +46,8 @@ in
     nix.settings = {
       substituters = [
         "https://cache.nixos.org"
-        "https://mirrors.bfsu.edu.cn/nix-chan"
+        "https://mirrors.bfsu.edu.cn/nix-channels/store"
       ];
     };
   };
 }
-

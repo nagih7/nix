@@ -53,14 +53,14 @@ let
     ++ [
       # Start quickshell with env re-sourced so XDG_DATA_DIRS is correct
       "bash -c 'source /etc/set-environment 2>/dev/null; qs -c ${qsConfig} &'"
-      # Set monitors
-      "${hostVars.nixConfig}/scripts/set_monitors.sh"
       "fcitx5"
     ]
   );
 
   # Lua mode: exec-once becomes hl.exec_cmd(...) inside a hyprland.start hook.
-  execLines = lib.concatMapStringsSep "\n" (c: "  hl.exec_cmd(${lib.generators.toLua { } c})") allExecs;
+  execLines = lib.concatMapStringsSep "\n" (
+    c: "  hl.exec_cmd(${lib.generators.toLua { } c})"
+  ) allExecs;
 
   luaConfig = ''
     -- autostart (migrated from execs.conf exec-once)
@@ -70,7 +70,7 @@ let
   '';
 in
 {
-  wayland.windowManager.hyprland = {
-    extraConfig = luaConfig;
-  };
+  # null means the active shell provider has no execs.conf-equivalent to
+  # migrate into an autostart hook.
+  wayland.windowManager.hyprland.extraConfig = lib.mkIf (rawConfig != null) luaConfig;
 }

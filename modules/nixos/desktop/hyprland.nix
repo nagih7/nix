@@ -41,6 +41,7 @@
     # === HYPRLAND UTILITIES ===
     hyprpicker
     hyprcursor
+    hyprsome
     nwg-look
 
     # === WAYLAND UTILITIES ===

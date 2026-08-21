@@ -14,61 +14,16 @@
 }:
 
 {
-  wayland.windowManager.hyprland = {
-    settings = {
-      general = {
-        gaps_in = 3;
-        gaps_out = 3;
-        gaps_workspaces = 50;
-
-        border_size = 3;
-
-        "col.active_border" = "$outline";
-        "col.inactive_border" = "$outline_variant";
-
-        resize_on_border = true;
-        no_focus_fallback = true;
-        allow_tearing = false;
-
-        snap = {
-          enabled = true;
-        };
-      };
-
-      decoration = {
-        rounding = 18;
-
-        blur = {
-          enabled = true;
-          xray = false;
-          special = false;
-          new_optimizations = true;
-          size = 14;
-          passes = 3;
-          brightness = 1;
-          noise = 0.01;
-          contrast = 1;
-          popups = true;
-          popups_ignorealpha = 0.6;
-          input_methods = true;
-          input_methods_ignorealpha = 0.8;
-          ignore_opacity = true;
-        };
-
-        shadow = {
-          enabled = true;
-          # ignore_window = true;
-          range = 30;
-          offset = "0 2";
-          render_power = 4;
-          color = "rgba(00000010)";
-        };
-
-        # Dim
-        dim_inactive = true;
-        dim_strength = 0.025;
-        dim_special = 0.07;
-      };
-    };
-  };
+  # configType = "lua" ignores hyprlang-style settings.monitor (it renders
+  # each list entry through toLua as a bare string, not the {output=...}
+  # table hl.monitor() expects), so the monitor layout has to be set here as
+  # raw Lua calls instead. This runs after general.lua's auto-detect
+  # hl.monitor({ output = "", mode = "preferred", position = "auto" }) call
+  # (home-manager appends module extraConfig in import order, and this
+  # module is imported after general.nix), so these calls win.
+  wayland.windowManager.hyprland.extraConfig = ''
+    -- appearance.lua — manual monitor layout (overrides general.lua's auto-detect)
+    hl.monitor({ output = "DP-2", mode = "2560x1440@180", position = "0x0", scale = 1 })
+    hl.monitor({ output = "HDMI-A-1", mode = "1920x1080@144", position = "-1080x-240", scale = 1, transform = 3 })
+  '';
 }

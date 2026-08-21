@@ -1,8 +1,6 @@
 { config, pkgs, ... }:
 
 {
-  # === MINIMAL AUDIO CONFIGURATION - NixOS 25.11 Default ===
-
   services.pulseaudio.enable = false;
   services.pipewire = {
     enable = true;

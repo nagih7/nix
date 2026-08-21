@@ -13,11 +13,13 @@
 { config, pkgs, end-4-dots }:
 
 let
+  hyprDir = "${end-4-dots}/dots/.config/hypr";
+
   # hyprlock.conf as shipped ships a broken "#!/bin/env bash" shebang for its
   # helper scripts (no /bin/env on NixOS) and assumes ~/.config paths; rewrite
   # both to point at our fixed local copies (see hyprlock/default.nix) and to
   # the derivation path for everything else.
-  hyprlockRaw = builtins.readFile "${end-4-dots}/dots/.config/hypr/hyprlock.conf";
+  hyprlockRaw = builtins.readFile "${hyprDir}/hyprlock.conf";
   hyprlockFinal = builtins.replaceStrings
     [
       # Longer/more specific strings must come first: replaceStrings matches
@@ -61,12 +63,12 @@ in
   };
 
   hyprland = {
-    generalConfig = builtins.readFile "${end-4-dots}/dots/.config/hypr/hyprland/general.lua";
-    envConfig = builtins.readFile "${end-4-dots}/dots/.config/hypr/hyprland/env.lua";
-    execsConf = builtins.readFile "${end-4-dots}/dots/.config/hypr/hyprland/execs.conf";
-    keybindsConfig = builtins.readFile "${end-4-dots}/dots/.config/hypr/hyprland/keybinds.lua";
-    scriptsDir = "${end-4-dots}/dots/.config/hypr/hyprland/scripts";
-    keybindsConfFile = "${end-4-dots}/dots/.config/hypr/hyprland/keybinds.conf";
+    generalConfig = builtins.readFile "${hyprDir}/hyprland/general.lua";
+    envConfig = builtins.readFile "${hyprDir}/hyprland/env.lua";
+    execsConf = builtins.readFile "${hyprDir}/hyprland/execs.conf";
+    keybindsConfig = builtins.readFile "${hyprDir}/hyprland/keybinds.lua";
+    scriptsDir = "${hyprDir}/hyprland/scripts";
+    keybindsConfFile = "${hyprDir}/hyprland/keybinds.conf";
   };
 
   hyprlock.finalConfig = hyprlockFinal;

@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   ...
 }:
 
@@ -7,7 +8,8 @@
   programs.hyprlock = {
     enable = true;
 
-    extraConfig = ''
+    # null means the active shell provider has no hyprlock opinion.
+    extraConfig = lib.mkIf (config.custom.desktopShell.hyprlock.finalConfig != null) ''
       ${config.custom.desktopShell.hyprlock.finalConfig}
     '';
 

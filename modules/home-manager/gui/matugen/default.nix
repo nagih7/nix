@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   hostVars,
   ...
@@ -7,18 +8,21 @@
 
 let
   localTemplatePath = "${hostVars.nixConfig}/modules/home-manager/gui/matugen/templates";
+  shellMatugen = config.custom.desktopShell.matugen;
 in
 {
   home.packages = with pkgs; [
     matugen
   ];
 
-  xdg.configFile."matugen/templates/kde/kde-material-you-colors-wrapper.sh" = {
-    source = config.custom.desktopShell.matugen.kdeWrapperScript;
-  };
+  # null means the active shell provider has no matugen base config to layer
+  # our local templates onto.
+  xdg.configFile."matugen/templates/kde/kde-material-you-colors-wrapper.sh" = lib.mkIf (
+    shellMatugen.kdeWrapperScript != null
+  ) { source = shellMatugen.kdeWrapperScript; };
 
   xdg.configFile."matugen/config.toml".text = ''
-    ${config.custom.desktopShell.matugen.finalConfig}
+    ${lib.optionalString (shellMatugen.finalConfig != null) shellMatugen.finalConfig}
 
     [templates.cava]
     input_path = '${localTemplatePath}/cava.config'

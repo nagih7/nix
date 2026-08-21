@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }:
@@ -24,26 +25,29 @@
   # each wallpaper change) can rewrite the [Colors:*] sections. Using
   # home.file with mkForce would lock the palette to the shell provider's
   # snapshot and break dynamic theming for kdialog / xdg-desktop-portal-kde.
-  home.activation.seedKdeglobals = config.lib.dag.entryAfter [ "writeBoundary" ] ''
-    target="${config.home.homeDirectory}/.config/kdeglobals"
-    if [ ! -e "$target" ] || [ -L "$target" ]; then
-      $DRY_RUN_CMD rm -f "$target"
-      $DRY_RUN_CMD install -m 0644 \
-        ${pkgs.writeText "kdeglobals-seed" (
-          config.custom.desktopShell.kde.kdeglobalsSeed
-          + ''
-            [KDE]
-            widgetStyle=Breeze
-          ''
-        )} "$target"
-    else
-      # In-place migrate any pre-existing kdeglobals from the prior
-      # widgetStyle=kvantum seed. plasma-apply-colorscheme only touches
-      # [Colors:*] sections, so [KDE].widgetStyle stays whatever was seeded
-      # first; without this rewrite, an existing user keeps loading Kvantum.
-      if ${pkgs.gnugrep}/bin/grep -q '^widgetStyle=kvantum$' "$target"; then
-        $DRY_RUN_CMD ${pkgs.gnused}/bin/sed -i 's/^widgetStyle=kvantum$/widgetStyle=Breeze/' "$target"
+  # null means the active shell provider has no kdeglobals opinion.
+  home.activation.seedKdeglobals = lib.mkIf (config.custom.desktopShell.kde.kdeglobalsSeed != null) (
+    config.lib.dag.entryAfter [ "writeBoundary" ] ''
+      target="${config.home.homeDirectory}/.config/kdeglobals"
+      if [ ! -e "$target" ] || [ -L "$target" ]; then
+        $DRY_RUN_CMD rm -f "$target"
+        $DRY_RUN_CMD install -m 0644 \
+          ${pkgs.writeText "kdeglobals-seed" (
+            config.custom.desktopShell.kde.kdeglobalsSeed
+            + ''
+              [KDE]
+              widgetStyle=Breeze
+            ''
+          )} "$target"
+      else
+        # In-place migrate any pre-existing kdeglobals from the prior
+        # widgetStyle=kvantum seed. plasma-apply-colorscheme only touches
+        # [Colors:*] sections, so [KDE].widgetStyle stays whatever was seeded
+        # first; without this rewrite, an existing user keeps loading Kvantum.
+        if ${pkgs.gnugrep}/bin/grep -q '^widgetStyle=kvantum$' "$target"; then
+          $DRY_RUN_CMD ${pkgs.gnused}/bin/sed -i 's/^widgetStyle=kvantum$/widgetStyle=Breeze/' "$target"
+        fi
       fi
-    fi
-  '';
+    ''
+  );
 }

@@ -10,12 +10,11 @@
   pkgs,
   end-4-dots,
   systemVars,
-  hostVars,
   ...
 }:
 
 let
-  shellName = hostVars.desktopShell or systemVars.desktopShell;
+  shellName = systemVars.desktopShell;
 
   providers = {
     ii = import ./providers/ii { inherit config pkgs end-4-dots; };

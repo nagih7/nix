@@ -8,6 +8,7 @@
 
 {
   config,
+  lib,
   ...
 }:
 
@@ -40,6 +41,9 @@ in
         # session value and hiding Papirus icons. Use home.sessionVariables.
       ];
     };
-    extraConfig = config.custom.desktopShell.hyprland.envConfig;
+    # null means the active shell provider has no env.lua-equivalent.
+    extraConfig = lib.mkIf (
+      config.custom.desktopShell.hyprland.envConfig != null
+    ) config.custom.desktopShell.hyprland.envConfig;
   };
 }

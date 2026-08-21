@@ -16,16 +16,18 @@
     kdePackages.qqc2-desktop-style
   ];
 
-  home.activation.configureDolphin = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    SRC="${config.custom.desktopShell.dolphin.rcPath}"
-    DEST="${config.xdg.configHome}/dolphinrc"
+  # null means the active shell provider has no dolphinrc opinion.
+  home.activation.configureDolphin = lib.mkIf (config.custom.desktopShell.dolphin.rcPath != null) (
+    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      SRC="${config.custom.desktopShell.dolphin.rcPath}"
+      DEST="${config.xdg.configHome}/dolphinrc"
 
-    # Chỉ copy nếu file nguồn thay đổi hoặc file đích chưa tồn tại
-    if [ ! -f "$DEST" ] || [ "$(readlink -f "$DEST")" != "$DEST" ]; then
-      echo "Configuring writable dolphinrc..."
-      rm -f "$DEST"
-      cp -f "$SRC" "$DEST"
-      chmod u+w "$DEST"
-    fi
-  '';
+      if [ ! -f "$DEST" ] || [ "$(readlink -f "$DEST")" != "$DEST" ]; then
+        echo "Configuring writable dolphinrc..."
+        rm -f "$DEST"
+        cp -f "$SRC" "$DEST"
+        chmod u+w "$DEST"
+      fi
+    ''
+  );
 }
