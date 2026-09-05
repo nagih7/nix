@@ -14,6 +14,8 @@
     # Provides plasma-apply-colorscheme, which kde-material-you-colors shells
     # out to in order to write [Colors:*] into ~/.config/kdeglobals.
     kdePackages.plasma-workspace
+    kdePackages.kaccounts-providers
+    kdePackages.kaccounts-integration
   ];
 
   home.sessionVariables = {

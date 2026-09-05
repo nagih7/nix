@@ -13,6 +13,14 @@
     withUWSM = true;
   };
 
+  # xdg-desktop-portal-kde must be installed here (system level, where the
+  # actual systemd user services get generated on NixOS) — the Hyprland
+  # module's default portal set is hyprland+gtk only. Without this,
+  # home-manager/xdg-portal.nix's hyprland-portals.conf routes FileChooser
+  # to a "kde" backend that was never installed, so open-file/folder dialogs
+  # silently fail (no service to answer the D-Bus call, no popup, no error).
+  xdg.portal.extraPortals = [ pkgs.kdePackages.xdg-desktop-portal-kde ];
+
   # Core system services
   services.gvfs.enable = true;
   programs.dconf.enable = true;
@@ -28,8 +36,17 @@
     NIXOS_OZONE_WL = "1";
   };
 
-  # Add GCC 15 lib to LD_LIBRARY_PATH for GLIBCXX_3.4.34 (required by Hyprland 0.52.1)
-  environment.sessionVariables.LD_LIBRARY_PATH = pkgs.lib.mkAfter [ "${pkgs.gcc15.cc.lib}/lib" ];
+  # Add GCC 15 lib to LD_LIBRARY_PATH for GLIBCXX_3.4.34 (required by Hyprland 0.52.1).
+  # Also add pipewire: Dolphin/kio-extras dlopen("libpipewire-0.3.so.0") for an
+  # optional plugin (not a direct link dependency, so Nix's RPATH patching
+  # doesn't cover it) and that dlopen only gets attempted on the KIO
+  # ApplicationLauncherJob path the portal/xdg-open use to launch it — not on
+  # a direct `dolphin` exec. When it fails there, Dolphin exits before ever
+  # showing a window, with no other error logged.
+  environment.sessionVariables.LD_LIBRARY_PATH = pkgs.lib.mkAfter [
+    "${pkgs.gcc15.cc.lib}/lib"
+    "${pkgs.pipewire}/lib"
+  ];
 
   environment.systemPackages = with pkgs; [
     gcc15.cc.lib

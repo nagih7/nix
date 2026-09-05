@@ -51,8 +51,17 @@ let
   allExecs = map (lib.replaceStrings [ "$qsConfig" ] [ qsConfig ]) (
     processedEnvFiles
     ++ [
-      # Start quickshell with env re-sourced so XDG_DATA_DIRS is correct
-      "bash -c 'source /etc/set-environment 2>/dev/null; qs -c ${qsConfig} &'"
+      # Start quickshell with env re-sourced so XDG_DATA_DIRS is correct, and
+      # via `uwsm app` rather than a raw exec: launched directly from
+      # hyprland.start (very early in the session), quickshell ends up a
+      # direct child of the compositor's own systemd service instead of a
+      # proper app scope. Every app it later launches inherits that same
+      # unscoped placement, which xdg-desktop-portal's caller-verification
+      # can't identify correctly — so any portal call those apps make (e.g.
+      # "open containing folder") silently fails, even after a full
+      # logout/login. Only killing and manually restarting quickshell later
+      # (once the session is fully settled) puts it in a normal scope.
+      "bash -c 'source /etc/set-environment 2>/dev/null; uwsm app -- qs -c ${qsConfig}'"
       "fcitx5"
     ]
   );

@@ -272,4 +272,27 @@ SERVICEEOF
       sed -i 's|Quickshell\.execDetached(\["qs", "-p", root\.settingsQmlPath\])|SettingsLauncher.openSettings()|g' \
         "$out/ii/modules/ii/sidebarRight/SidebarRightContent.qml"
     fi
+
+    # === ROUTE APP LAUNCHES THROUGH UWSM ===
+    # DesktopEntry.execute() (quickshell's own built-in launcher) spawns the
+    # app as a direct child of quickshell itself, landing it in quickshell's
+    # own cgroup instead of a proper per-app systemd scope. Apps launched
+    # this way (search results, dock icons) can't be identified correctly by
+    # xdg-desktop-portal's caller-verification, so any portal call they make
+    # (e.g. FileChooser/OpenURI for "open containing folder") silently fails
+    # — apps launched via Hyprland's own exec dispatcher (keybinds) or a
+    # terminal aren't affected, since those get scoped correctly. `uwsm app
+    # --` accepts a desktop-entry id directly and launches it in its own
+    # scope, matching the working cases.
+    if [ -f "$out/ii/modules/ii/dock/DockAppButton.qml" ]; then
+      ${pkgs.perl}/bin/perl -i -pe \
+        's/root\.desktopEntry\?\.execute\(\);/if (root.desktopEntry?.id !== undefined) { Quickshell.execDetached(["uwsm", "app", "--", root.desktopEntry.id]); } else { root.desktopEntry?.execute(); }/g' \
+        "$out/ii/modules/ii/dock/DockAppButton.qml"
+    fi
+
+    if [ -f "$out/ii/modules/ii/overview/SearchItem.qml" ]; then
+      ${pkgs.perl}/bin/perl -i -pe \
+        's/onClicked: modelData\.execute\(\)/onClicked: { if (modelData.id !== undefined) { Quickshell.execDetached(["uwsm", "app", "--", modelData.id]); } else { modelData.execute(); } }/' \
+        "$out/ii/modules/ii/overview/SearchItem.qml"
+    fi
 ''

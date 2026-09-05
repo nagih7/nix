@@ -9,6 +9,7 @@
   programs.steam = {
     enable = true; # Enable Steam gaming platform
     remotePlay.openFirewall = true; # Allow Steam Remote Play through firewall
+    dedicatedServer.openFirewall = true;
     gamescopeSession.enable = true; # Enable Gamescope compositor session for Steam Deck-like experience
   };
 
