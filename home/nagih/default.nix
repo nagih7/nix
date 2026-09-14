@@ -21,6 +21,7 @@
 
   home.packages = with pkgs; [
     inputs.zen-browser.packages.${pkgs.system}.default
+    inputs.claude-desktop.packages.${pkgs.system}.default
     pkgs.unstable.discord
     pkgs.unstable.spotify
     pkgs.unstable.vscode
@@ -120,7 +121,7 @@
       IdentityFile ~/.ssh/id_ed25519
     '';
 
-    matchBlocks = {
+    settings = {
       "devbox" = {
         hostname = "10.10.60.10";
         user = "nagih";

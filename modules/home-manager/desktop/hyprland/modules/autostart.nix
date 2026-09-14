@@ -61,6 +61,16 @@ let
       # "open containing folder") silently fails, even after a full
       # logout/login. Only killing and manually restarting quickshell later
       # (once the session is fully settled) puts it in a normal scope.
+
+      # === Resolve PassKey ===
+      # 1. Force Hyprland to share system variables to DBus & Systemd
+      "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
+      # 2. Start the keyring daemon telling it to act as a secure secrets provider
+      "gnome-keyring-daemon --start --components=secrets"
+      # 3. Ensure a Polkit Authentication Agent is running 
+      # (This is mandatory so a GUI prompt can securely handle authentication popups if needed)
+      "lxqt-policykit-agent" # Or replace with whichever polkit agent you have installed (e.g. polkit-gnome)
+
       "bash -c 'source /etc/set-environment 2>/dev/null; uwsm app -- qs -c ${qsConfig}'"
       "fcitx5"
     ]

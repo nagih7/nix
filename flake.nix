@@ -34,6 +34,10 @@
       url = "github:youwen5/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    claude-desktop = {
+      url = "github:aaddrick/claude-desktop-debian";
+    };
   };
 
   outputs =
@@ -87,6 +91,7 @@
               nagih7-dots
               end-4-dots
               zen-browser
+              claude-desktop
               ;
           };
 

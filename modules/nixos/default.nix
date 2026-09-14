@@ -18,6 +18,7 @@
     ./services/cloudflared.nix # Cloudflared configuration for secure tunneling
     ./services/obs-studio.nix
     ./services/smb.nix
+    ./services/pam.nix
 
     # === DESKTOP CONFIGURATION ===
     ./desktop/hyprland.nix
