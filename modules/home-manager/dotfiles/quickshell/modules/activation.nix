@@ -2,64 +2,51 @@
   config,
   lib,
   pkgs,
-  userObj,
+  ...
 }:
 
+let
+  home = config.home.homeDirectory;
+  shell = config.custom.desktopShell;
+in
 {
-  # === HOME ACTIVATION SCRIPT ===
-  # Set up directories and files needed for quickshell at activation time
-  setupQuickShellEnvironment = config.lib.dag.entryAfter [ "writeBoundary" ] ''
-        # === DIRECTORY STRUCTURE ===
-        $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.local/state/quickshell
-        $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.config/hypr/custom/scripts
-        $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/Pictures/Wallpapers
-        $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/Pictures/Screenshots
-        $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.local/state/quickshell/user/generated
-        $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.config/illogical-impulse/translations
-        
-        # === TRANSLATION FILES ===
-        if [ ! -f "${config.home.homeDirectory}/.config/illogical-impulse/translations/en_US.json" ]; then
-          cat > ${config.home.homeDirectory}/.config/illogical-impulse/translations/en_US.json << 'TRANEOF'
-    {
-      "language": "English (US)",
-      "translations": {}
-    }
-    TRANEOF
-        fi
-        
-        # === PYTHON VIRTUAL ENVIRONMENT ===
-        if [ ! -d "${config.home.homeDirectory}/.local/state/quickshell/.venv" ]; then
-          $DRY_RUN_CMD ${pkgs.python3}/bin/python -m venv --system-site-packages ${config.home.homeDirectory}/.local/state/quickshell/.venv
-          $DRY_RUN_CMD ${config.home.homeDirectory}/.local/state/quickshell/.venv/bin/pip install materialyoucolor
-        fi
-              
-        # === HYPRLAND SCRIPTS ===
-        # Create empty restore script for video wallpapers
-        $DRY_RUN_CMD touch ${config.home.homeDirectory}/.config/hypr/custom/scripts/__restore_video_wallpaper.sh
-        $DRY_RUN_CMD chmod +x ${config.home.homeDirectory}/.config/hypr/custom/scripts/__restore_video_wallpaper.sh
-        
-        # === SETTINGS LAUNCHER ===
-        # Create wrapper script to launch settings (unsets QS_CONFIG_NAME to avoid conflict with --path)
-        $DRY_RUN_CMD mkdir -p ${config.home.homeDirectory}/.local/bin
-        cat > ${config.home.homeDirectory}/.local/bin/qs-settings << 'SETTINGSEOF'
-    #!/usr/bin/env bash
-    # Wrapper script to launch quickshell settings
-    # Unsets QS_CONFIG_NAME to avoid conflict with --path flag
-    env -u QS_CONFIG_NAME quickshell --path ~/.config/quickshell/ii/settings.qml "$@"
-    SETTINGSEOF
-        $DRY_RUN_CMD chmod +x ${config.home.homeDirectory}/.local/bin/qs-settings
-        
-        # === FIX PERMISSIONS ===
-        # Ensure the state directory is writable by the user
-        $DRY_RUN_CMD chown -R ${userObj.username} ${config.home.homeDirectory}/.local/state/quickshell || true
-        $DRY_RUN_CMD chmod -R u+rw ${config.home.homeDirectory}/.local/state/quickshell || true
+  # Mutable state the ii shell expects to exist before first launch.
+  home.activation.setupQuickShellEnvironment = config.lib.dag.entryAfter [ "writeBoundary" ] ''
+    # === DIRECTORY STRUCTURE ===
+    $DRY_RUN_CMD mkdir -p \
+      ${home}/.local/state/quickshell/user/generated \
+      ${home}/.config/hypr/custom/scripts \
+      ${home}/.config/illogical-impulse/translations \
+      ${home}/Pictures/Wallpapers \
+      ${home}/Pictures/Screenshots \
+      ${home}/.local/bin
 
-        # === DEFAULT WALLPAPER ===
-        ${lib.optionalString (config.custom.desktopShell.quickshell.wallpaperSeed != null) ''
-          if [ ! -f "${config.home.homeDirectory}/Pictures/Wallpapers/default.png" ]; then
-            $DRY_RUN_CMD cp -f ${config.custom.desktopShell.quickshell.wallpaperSeed} \
-              ${config.home.homeDirectory}/Pictures/Wallpapers/default.png
-          fi
-        ''}
+    # === TRANSLATION FILES ===
+    if [ ! -f "${home}/.config/illogical-impulse/translations/en_US.json" ]; then
+      $DRY_RUN_CMD install -m 0644 ${pkgs.writeText "ii-en_US.json" ''
+        {
+          "language": "English (US)",
+          "translations": {}
+        }
+      ''} "${home}/.config/illogical-impulse/translations/en_US.json"
+    fi
+
+    # === HYPRLAND SCRIPTS ===
+    # Empty restore script for video wallpapers (ii execs it on start).
+    $DRY_RUN_CMD touch ${home}/.config/hypr/custom/scripts/__restore_video_wallpaper.sh
+    $DRY_RUN_CMD chmod +x ${home}/.config/hypr/custom/scripts/__restore_video_wallpaper.sh
+
+    # === SETTINGS LAUNCHER ===
+    # `quickshell --path` and QS_CONFIG_NAME conflict; unset the latter.
+    $DRY_RUN_CMD install -m 0755 ${pkgs.writeShellScript "qs-settings" ''
+      exec env -u QS_CONFIG_NAME quickshell --path ~/.config/quickshell/${shell.name}/settings.qml "$@"
+    ''} "${home}/.local/bin/qs-settings"
+
+    # === DEFAULT WALLPAPER ===
+    ${lib.optionalString (shell.quickshell.wallpaperSeed != null) ''
+      if [ ! -f "${home}/Pictures/Wallpapers/default.png" ]; then
+        $DRY_RUN_CMD cp -f ${shell.quickshell.wallpaperSeed} ${home}/Pictures/Wallpapers/default.png
+      fi
+    ''}
   '';
 }

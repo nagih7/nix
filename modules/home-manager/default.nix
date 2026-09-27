@@ -8,7 +8,6 @@
     ./desktop/hyprland
     ./desktop/hyprlock
     ./desktop/hypridle.nix
-    ./desktop/xdg-portal.nix
 
     # Dotfiles
     ./dotfiles/quickshell

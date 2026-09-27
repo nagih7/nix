@@ -17,9 +17,12 @@ let
   shellHyprland = config.custom.desktopShell.hyprland;
 in
 {
+  # The NixOS module (modules/nixos/desktop/hyprland.nix) owns the Hyprland
+  # package, UWSM session and portals; home-manager only renders the config.
   wayland.windowManager.hyprland = {
     enable = true;
-    package = pkgs.hyprland;
+    package = null;
+    portalPackage = null;
     configType = "lua";
   };
 

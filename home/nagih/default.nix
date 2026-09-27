@@ -6,6 +6,9 @@
   ...
 }:
 
+let
+  system = pkgs.stdenv.hostPlatform.system;
+in
 {
   home = {
     username = userObj.username;
@@ -16,12 +19,11 @@
     ../common
     ../../modules/home-manager/apps/beekeeper-studio.nix
     ../../modules/home-manager/apps/cisco-packet-tracer.nix
-    # (pkgs.callPackage ../../modules/home-manager/build/coccoc { })
   ];
 
   home.packages = with pkgs; [
-    inputs.zen-browser.packages.${pkgs.system}.default
-    inputs.claude-desktop.packages.${pkgs.system}.default
+    inputs.zen-browser.packages.${system}.default
+    inputs.claude-desktop.packages.${system}.default
     pkgs.unstable.discord
     pkgs.unstable.spotify
     pkgs.unstable.vscode
@@ -47,7 +49,6 @@
     zed-editor
     udisks
     calibre
-    sqlite
     awscli2
     talosctl
     wireguard-tools
@@ -66,26 +67,25 @@
       ];
     })
     (writeShellScriptBin "kfx-convert" ''
-      #!/usr/bin/env bash
       set -euo pipefail
-      
+
       INPUT=''${1:?Usage: kfx-convert input.epub [output.kfx]}
       OUTPUT=''${2:-"''${INPUT%.*}.kfx"}
-      
+
       if [[ ! -f "$INPUT" ]]; then
         echo "❌ File not exits: $INPUT" >&2
         exit 1
       fi
-      
+
       echo "📚 Rendering EPUB → KFX: $INPUT → $OUTPUT"
-      
+
       docker run --rm -it \
         -v "$PWD:/app:rw" \
         yshalsager/calibre-with-kfx \
         "$INPUT" "$OUTPUT" \
         --pages 0 \
-        --book 
-      
+        --book
+
       echo "✅ Done: $OUTPUT"
     '')
   ];
@@ -95,10 +95,8 @@
     blog = "cd /home/nagih/hugo";
     nix-config = "cd /home/nagih/Workspaces/config/nixos";
 
-    # === CODE EDITOR WORKFLOW (Enhanced) ===
     idea = "idea-community";
 
-    # === DEVELOPMENT SHORTCUTS ===
     wsp = "cd ~/Workspaces";
     prj = "cd ~/Workspaces/projects";
     noob = "cd ~/Workspaces/noob";
@@ -141,6 +139,47 @@
         userKnownHostsFile = "/dev/null";
         proxyCommand = "sh -c '${pkgs.awscli2}/bin/aws ssm start-session --target %h --document-name AWS-StartSSHSession --parameters \"portNumber=%p\"'";
       };
+    };
+  };
+
+  # Syncthing is per-user state, not host metadata.
+  services.syncthing = {
+    enable = true;
+
+    settings = {
+      gui = {
+        address = "127.0.0.1:8384";
+        user = "nagih";
+      };
+
+      devices = {
+        "nixos-desktop" = {
+          id = "CQA7ZJT-S4HOWZ5-TZLMHEC-B7XGZB4-XWVA7BM-IPR3RPL-SCTFXIA-O6GSHQQ";
+        };
+        "syncthing-server" = {
+          id = "6DLXC5P-OYUDW5M-7NYJOSU-3DHKU65-2KECRVD-MEVDAF4-CYTOJWE-7NJXFAF";
+          addresses = [ "tcp://14.225.218.83:22000" ];
+        };
+      };
+
+      # Folder IDs must stay exactly as the server knows them.
+      folders =
+        let
+          shared = id: dir: {
+            inherit id;
+            path = "/home/nagih/${dir}";
+            devices = [
+              "nixos-desktop"
+              "syncthing-server"
+            ];
+          };
+        in
+        {
+          workspaces = shared "workspaces" "Workspaces";
+          documents = shared "documents" "Documents";
+          pictures = shared "pictures" "Pictures";
+          hugo = shared "hugo" "hugo";
+        };
     };
   };
 }

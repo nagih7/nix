@@ -2,7 +2,6 @@
   config,
   pkgs,
   systemVars,
-  hostVars,
   ...
 }:
 
@@ -14,40 +13,30 @@ let
       description = user.description;
       home = "/home/${user.username}";
       extraGroups = [
-        "wheel" # Enable sudo
-        "networkmanager" # Manage network connections
-        "audio" # Access audio devices
-        "video" # Access video devices
-        "input" # Access input devices
-        "systemd-journal" # Read system logs
-        "disk" # Disk management access
-        "libvirtd" # Libvirt virtualization
-        "kvm" # Kernel-based Virtual Machine
-        "docker" # Docker container management
+        "wheel" # sudo
+        "networkmanager"
+        "audio"
+        "video"
+        "input"
+        "systemd-journal" # read system logs
+        "disk"
+        "libvirtd"
+        "kvm"
+        "docker"
         "lp"
       ];
-      shell = pkgs.zsh; # Default shell (zsh)
+      shell = pkgs.zsh;
     };
   };
 in
 {
-  imports = [
-    ../../modules/nixos
+  system.stateVersion = systemVars.nixVersion;
+  programs.zsh.enable = true;
+
+  users.users = builtins.listToAttrs (map mkUserConfig config.host.users);
+
+  nix.settings.substituters = [
+    "https://cache.nixos.org"
+    "https://mirrors.bfsu.edu.cn/nix-channels/store"
   ];
-
-  # === USER ACCOUNT CONFIGURATION ===
-  config = {
-    system.stateVersion = systemVars.nixVersion;
-    programs.zsh.enable = true;
-
-    # === USER ACCOUNT CONFIGURATION ===
-    users.users = builtins.listToAttrs (map mkUserConfig hostVars.users);
-
-    nix.settings = {
-      substituters = [
-        "https://cache.nixos.org"
-        "https://mirrors.bfsu.edu.cn/nix-channels/store"
-      ];
-    };
-  };
 }

@@ -10,9 +10,7 @@
     kdePackages.dolphin
     kdePackages.kio
     kdePackages.kio-extras
-    kdePackages.breeze
     kdePackages.breeze-icons
-    kdePackages.plasma-integration
     kdePackages.qqc2-desktop-style
   ];
 

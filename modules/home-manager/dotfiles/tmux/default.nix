@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  hostVars,
   nagih7-dots,
   ...
 }:
@@ -46,6 +45,6 @@ in
   };
 
   home.sessionVariables = {
-    TMUXINATOR_CONFIG = "${config.home.homeDirectory}/Workspaces/config/tmuxinator";
+    TMUXINATOR_CONFIG = "${config.home.homeDirectory}/Workspaces/tmuxinator";
   };
 }

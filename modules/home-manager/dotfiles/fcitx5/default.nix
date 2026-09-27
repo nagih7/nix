@@ -1,13 +1,9 @@
-{
-  config,
-  lib,
-  pkgs,
-  hostVars,
-  ...
-}:
+{ pkgs, ... }:
 
 {
-  # SYSTEM-LEVEL
+  # i18n.inputMethod sets GTK_IM_MODULE / QT_IM_MODULE / XMODIFIERS etc. to
+  # "fcitx" (the correct value — "fcitx5" is not a valid IM module name).
+  # fcitx5 itself is started by the Hyprland autostart hook.
   i18n.inputMethod = {
     enable = true;
     type = "fcitx5";
@@ -19,38 +15,5 @@
     };
   };
 
-  # ENVIRONMENT VARIABLES
-  home.sessionVariables = {
-    GTK_IM_MODULE = lib.mkForce "fcitx";
-    QT_IM_MODULE = lib.mkForce "fcitx";
-    XMODIFIERS = lib.mkForce "@im=fcitx";
-    SDL_IM_MODULE = lib.mkForce "fcitx";
-    GLFW_IM_MODULE = lib.mkForce "fcitx";
-    FCITX_ENABLE_WAYLAND = lib.mkForce "1";
-  };
-
-  # CONFIGURATION
   xdg.configFile."fcitx5".source = ./config;
-
-  # AUTOSTART
-  xdg.configFile."autostart/fcitx5.desktop" = {
-    force = true;
-    text = ''
-      [Desktop Entry]
-      Name=Fcitx 5
-      GenericName=Input Method
-      Comment=Start Input Method
-      Exec=fcitx5 -d
-      Icon=fcitx
-      Terminal=false
-      Type=Application
-      Categories=System;Utility;
-      StartupNotify=false
-      X-GNOME-Autostart-Phase=Applications
-      X-GNOME-AutoRestart=false
-      X-GNOME-Autostart-Notify=false
-      X-KDE-autostart-after=panel
-      Hidden=false
-    '';
-  };
 }

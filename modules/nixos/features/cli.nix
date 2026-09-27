@@ -4,7 +4,6 @@
   environment.systemPackages = with pkgs; [
     # Nix-specific
     nix-output-monitor
-    nh
     nixfmt
     nixfmt-tree
     nix-index

@@ -10,6 +10,9 @@
       pull.rebase = false;
       core.editor = "nvim";
       core.pager = "delta";
+      # Tokens go to the GNOME keyring (unlocked by PAM at login) instead of
+      # plaintext ~/.git-credentials.
+      credential.helper = "${pkgs.git.override { withLibsecret = true; }}/bin/git-credential-libsecret";
 
       interactive.diffFilter = "delta --color-only";
 

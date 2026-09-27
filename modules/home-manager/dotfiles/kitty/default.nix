@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  hostVars,
-  ...
-}:
+{ ... }:
 
 {
   programs.kitty = {
@@ -18,7 +13,7 @@
     settings = {
       # Remote control for theme reloading
       allow_remote_control = true;
-      listen_on = "unix:/tmp/kitty-socket";
+      listen_on = "unix:@kitty"; # abstract socket, per-user, no /tmp file
 
       # Cursor settings
       cursor_shape = "beam";

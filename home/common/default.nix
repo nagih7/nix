@@ -1,9 +1,5 @@
 {
   config,
-  pkgs,
-  lib,
-  unstable,
-  inputs,
   systemVars,
   hostVars,
   userObj,
@@ -14,13 +10,7 @@
   programs.home-manager.enable = true;
   home.stateVersion = systemVars.homeManagerVersion;
 
-  imports = [
-    ../../modules/home-manager
-  ];
-
   programs.direnv.enable = true;
-
-  services.syncthing = hostVars.syncthing;
 
   xdg.userDirs = {
     enable = true;
@@ -35,16 +25,12 @@
   };
 
   home.sessionVariables = {
-    NH_FLAKE = hostVars.nixConfig;
-    HOSTNAME = hostVars.hostname;
-    # Editor
     EDITOR = "nvim";
     VISUAL = "nvim";
 
-    # Directories
     DOWNLOAD_DIR = "${config.home.homeDirectory}/Downloads";
     DOCUMENTS_DIR = "${config.home.homeDirectory}/Documents";
-    NIX_CONFIG_DIR = "${hostVars.nixConfig}";
+    NIX_CONFIG_DIR = hostVars.nixConfig;
   };
 
   home.file.".npmrc".text = ''
@@ -65,22 +51,15 @@
     docs = "cd ~/Documents";
     down = "cd ~/Downloads";
 
-    # --- System Operations ---
-    nixs = "nh os switch $NH_FLAKE --hostname $HOSTNAME --impure";
-    nixu = "nix flake update";
-    nixt = "nh os test $NH_FLAKE --hostname $HOSTNAME --impure";
-
-    # --- Home Manager ---
-    hms = "nh home switch $NH_FLAKE --impure -b bak";
-
-    # --- Garbage Collection (Dọn rác) ---
+    # --- System (NH_FLAKE is exported by programs.nh; the flake is pure) ---
+    nixs = "nh os switch";
+    nixt = "nh os test";
+    nixu = "nix flake update --flake $NH_FLAKE";
+    hms = "nh home switch -b bak";
     nixc = "nh clean all --keep 3";
-
-    # --- Developer Tools ---
     nixf = "nh search";
 
     hdt = "hyprctl keyword debug:overlay true";
     hdf = "hyprctl keyword debug:overlay false";
   };
-
 }

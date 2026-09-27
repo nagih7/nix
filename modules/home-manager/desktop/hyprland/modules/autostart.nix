@@ -9,7 +9,6 @@
 {
   config,
   lib,
-  hostVars,
   ...
 }:
 
@@ -26,8 +25,6 @@ let
     let
       lines = lib.splitString "\n" rawConfig;
 
-      isNotBlacklisted = line: !(lib.any (key: lib.hasInfix key line) keysToRemove);
-
       processLine =
         line:
         let
@@ -35,6 +32,12 @@ let
           cleanLine = lib.removePrefix "exec-once =" (lib.strings.trim trimmed);
         in
         lib.strings.trim cleanLine;
+
+      # Only blacklist lines whose command itself *starts with* one of these
+      # (e.g. the standalone "qs -c $qsConfig &" exec-once). A substring/hasInfix
+      # check would also match unrelated commands that merely reference "qs -c"
+      # elsewhere, such as the cliphist wl-paste watchers.
+      isNotBlacklisted = line: !(lib.any (key: lib.hasPrefix key (processLine line)) keysToRemove);
 
       isValidLine =
         line:
@@ -49,7 +52,17 @@ let
 
   # All autostart commands; substitute the hyprlang $qsConfig var (no Lua vars).
   allExecs = map (lib.replaceStrings [ "$qsConfig" ] [ qsConfig ]) (
-    processedEnvFiles
+    [
+      # hyprland.start fires as soon as Hyprland parses its config, which can
+      # race ahead of UWSM's own "compositor is ready" handshake. If that race
+      # is lost, everything below (including the `uwsm app --` launch) still
+      # runs before UWSM has activated the session/app-graphical.slice, so
+      # apps end up in the wrong systemd scope anyway (see comment below).
+      # `uwsm finalize` explicitly closes that race; it's a no-op if UWSM has
+      # already finalized on its own.
+      "uwsm finalize"
+    ]
+    ++ processedEnvFiles
     ++ [
       # Start quickshell with env re-sourced so XDG_DATA_DIRS is correct, and
       # via `uwsm app` rather than a raw exec: launched directly from
@@ -61,15 +74,6 @@ let
       # "open containing folder") silently fails, even after a full
       # logout/login. Only killing and manually restarting quickshell later
       # (once the session is fully settled) puts it in a normal scope.
-
-      # === Resolve PassKey ===
-      # 1. Force Hyprland to share system variables to DBus & Systemd
-      "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
-      # 2. Start the keyring daemon telling it to act as a secure secrets provider
-      "gnome-keyring-daemon --start --components=secrets"
-      # 3. Ensure a Polkit Authentication Agent is running 
-      # (This is mandatory so a GUI prompt can securely handle authentication popups if needed)
-      "lxqt-policykit-agent" # Or replace with whichever polkit agent you have installed (e.g. polkit-gnome)
 
       "bash -c 'source /etc/set-environment 2>/dev/null; uwsm app -- qs -c ${qsConfig}'"
       "fcitx5"

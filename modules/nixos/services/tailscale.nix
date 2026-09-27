@@ -1,12 +1,17 @@
-{ config, hostVars, ... }:
+{
+  config,
+  userName,
+  ...
+}:
 
 {
   services.tailscale = {
-    enable = true;
+    enable = config.host.tailscale.enable;
     useRoutingFeatures = "client";
     openFirewall = true;
+    # Consumed by tailscaled-autoconnect once authKeyFile is set (secrets.nix).
     extraUpFlags = [
-      "--operator=${hostVars.user.name}"
+      "--operator=${userName}"
       "--accept-dns=false"
       "--no-tpm"
     ];

@@ -1,9 +1,4 @@
-{
-  config,
-  pkgs,
-  quickshell,
-  ...
-}:
+{ pkgs, ... }:
 
 {
   # === SYSTEMD USER SERVICES ===

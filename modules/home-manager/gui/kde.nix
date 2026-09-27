@@ -6,10 +6,10 @@
 }:
 
 {
+  # Dolphin/KIO live in dotfiles/dolphin; Breeze + plasma-integration in
+  # gui/qt-theme.nix.
   home.packages = with pkgs; [
     kdePackages.kdialog
-    kdePackages.dolphin
-    kdePackages.kio-extras
     python3Packages.kde-material-you-colors
     # Provides plasma-apply-colorscheme, which kde-material-you-colors shells
     # out to in order to write [Colors:*] into ~/.config/kdeglobals.
@@ -34,13 +34,15 @@
       if [ ! -e "$target" ] || [ -L "$target" ]; then
         $DRY_RUN_CMD rm -f "$target"
         $DRY_RUN_CMD install -m 0644 \
-          ${pkgs.writeText "kdeglobals-seed" (
-            config.custom.desktopShell.kde.kdeglobalsSeed
-            + ''
-              [KDE]
-              widgetStyle=Breeze
-            ''
-          )} "$target"
+          ${
+            pkgs.writeText "kdeglobals-seed" (
+              config.custom.desktopShell.kde.kdeglobalsSeed
+              + ''
+                [KDE]
+                widgetStyle=Breeze
+              ''
+            )
+          } "$target"
       else
         # In-place migrate any pre-existing kdeglobals from the prior
         # widgetStyle=kvantum seed. plasma-apply-colorscheme only touches

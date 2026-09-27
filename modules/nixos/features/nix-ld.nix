@@ -5,6 +5,7 @@
     enable = true;
 
     libraries = with pkgs; [
+      stdenv.cc.cc.lib
       stdenv.cc.cc
       openssl
       glibc

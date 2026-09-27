@@ -9,15 +9,13 @@
     alsa.enable = true;
     wireplumber.enable = true;
 
-    wireplumber.configPackages = [
-      (pkgs.writeTextDir "share/wireplumber/wireplumber.conf.d/99-disable-routes.conf" ''
-        wireplumber.profiles = {
-          main = {
-            state-routes.lua = disabled
-          }
-        }
-      '')
-    ];
+    extraConfig.pipewire-pulse."92-virtual-devices" = {
+      "pulse.cmd" = [
+        { cmd = "load-module"; args = "module-null-sink sink_name=blackhole sink_properties=device.description=BlackHole"; }
+        { cmd = "load-module"; args = "module-combine-sink sink_name=multi_output sink_properties=device.description=Multi-Output slaves=easyeffects_sink,easyeffects_source,blackhole"; }
+        { cmd = "load-module"; args = "module-remap-source master=blackhole.monitor source_name=blackhole_mic source_properties=device.description=\"BlackHole Source\""; }
+      ];
+    };
   };
 
   security.rtkit.enable = true;
@@ -26,9 +24,7 @@
   environment.systemPackages = with pkgs; [
     pavucontrol
     alsa-utils
-    sof-firmware
-    libopus
     easyeffects
-    vlc
+    pulseaudio
   ];
 }

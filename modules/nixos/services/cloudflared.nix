@@ -1,9 +1,5 @@
-{ hostVars, ... }:
+{ ... }:
 
 {
-  config = {
-    services.cloudflared = {
-      enable = false;
-    };
-  };
+  services.cloudflared.enable = false;
 }

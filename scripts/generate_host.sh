@@ -25,21 +25,24 @@ cat /etc/nixos/hardware-configuration.nix > hosts/${HOSTNAME}/hardware-configura
 writer "Generating hosts/${HOSTNAME}/variables.nix..." 0.01
 
 cat > hosts/${HOSTNAME}/variables.nix <<EOL
+# Schema: modules/nixos/host-options.nix
 {
-  nixConfig = "$(pwd)";
-  homeConfig = "$(pwd)/modules/home-manager";
-
   hostname = "${HOSTNAME}";
+  nixConfig = "$(pwd)";
+
   cpu = "${CPU}";
-  gpu = "${GPU}";
+  gpu = "${GPU:-none}";
+
   nameservers = [ "8.8.8.8" "8.8.4.4" ];
+  fallbackDns = [ "1.1.1.1" "1.0.0.1" ];
+
   firewall = {
-    enable = ${ENABLE_FIREWALL};
-    tcp_ports = [ ${FIREWALL_PORTS//,/ } ];
-    udp_ports = [ ];
-    trusted_interfaces = [ "tailscale0" ];
+    tcpPorts = [ ${FIREWALL_PORTS//,/ } ];
+    udpPorts = [ ];
+    trustedInterfaces = [ "tailscale0" ];
   };
-  fallback_dns = [ "1.1.1.1" "1.0.0.1" ];
+
+  tailscale.enable = ${ENABLE_TAILSCALE};
 
   users = [
     {
@@ -51,8 +54,5 @@ cat > hosts/${HOSTNAME}/variables.nix <<EOL
       git_email = "${GIT_EMAIL}";
     }
   ];
-
-  tailscale = { enable = ${ENABLE_TAILSCALE}; };
-  syncthing = { enable = ${ENABLE_SYNCTHING}; };
 }
 EOL

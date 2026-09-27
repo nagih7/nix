@@ -21,14 +21,22 @@
         style = "none";
       };
 
+      # Grayscale antialiasing everywhere (matches the GNOME/GTK dconf setting
+      # in home-manager gui/fontconfig.nix).
       subpixel = {
-        rgba = "rgb";
-        lcdfilter = "default";
+        rgba = "none";
+        lcdfilter = "none";
       };
 
       defaultFonts = {
-        sansSerif = [ "Inter" "DejaVu Sans" ]; 
-        serif = [ "Noto Serif" "DejaVu Serif" ];
+        sansSerif = [
+          "Inter"
+          "DejaVu Sans"
+        ];
+        serif = [
+          "Noto Serif"
+          "DejaVu Serif"
+        ];
         monospace = [ "JetBrainsMono Nerd Font" ];
         emoji = [ "Noto Color Emoji" ];
       };

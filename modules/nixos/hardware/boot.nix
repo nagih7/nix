@@ -2,24 +2,26 @@
   config,
   lib,
   pkgs,
-  hostVars,
   ...
 }:
 
+let
+  inherit (config.host) cpu;
+in
 {
   boot = {
     loader = {
       systemd-boot = {
         enable = true;
-        configurationLimit = 5; # Number of boot entries to keep
+        configurationLimit = 5;
         editor = false;
-        consoleMode = "auto"; # Options: "auto", "max", "0", "1", "2"
+        consoleMode = "auto";
       };
 
       timeout = 5;
       efi = {
-        canTouchEfiVariables = true; # Allow writing to EFI variables
-        efiSysMountPoint = "/boot"; # EFI partition mount point (or "/boot/efi")
+        canTouchEfiVariables = true;
+        efiSysMountPoint = "/boot";
       };
     };
 
@@ -30,12 +32,7 @@
 
     plymouth.enable = true;
 
-    kernelModules =
-      [ ]
-      ++ lib.optionals (hostVars.cpu == "intel") [ "kvm-intel" ]
-      ++ lib.optionals (hostVars.cpu == "amd") [ "kvm-amd" ];
-
-    extraModulePackages = [ ];
+    kernelModules = lib.optional (cpu == "intel") "kvm-intel" ++ lib.optional (cpu == "amd") "kvm-amd";
 
     extraModprobeConfig = ''
       options kvm_intel nested=1
@@ -43,31 +40,34 @@
     '';
   };
 
-  # === NIX STORE MANAGEMENT AND OPTIMIZATION ===
-  nix = {
-    gc = {
-      automatic = true;
+  # === NIX ===
+  nix.settings = {
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
+    auto-optimise-store = true;
+  };
+
+  # nh owns rebuilds and garbage collection (replaces nix.gc); it also
+  # exports NH_FLAKE so `nh os switch` / `nh home switch` need no arguments.
+  programs.nh = {
+    enable = true;
+    flake = config.host.nixConfig;
+    clean = {
+      enable = true;
       dates = "weekly";
-      options = "--delete-older-than 7d";
-    };
-    settings = {
-      experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-      auto-optimise-store = true;
+      extraArgs = "--keep 3 --keep-since 7d";
     };
   };
 
   environment.systemPackages =
     with pkgs;
-    [
-    ]
-    ++ lib.optionals (hostVars.cpu == "intel") [
+    lib.optionals (cpu == "intel") [
       intel-gpu-tools
       libva-utils
     ]
-    ++ lib.optionals (hostVars.cpu == "amd") [
+    ++ lib.optionals (cpu == "amd") [
       radeontop
     ];
 }

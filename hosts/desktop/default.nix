@@ -1,4 +1,4 @@
-{ config, hostVars, ... }:
+{ config, ... }:
 
 {
   imports = [

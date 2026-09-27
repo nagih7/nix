@@ -2,12 +2,13 @@
   config,
   lib,
   pkgs,
-  hostVars,
   ...
 }:
 
 let
-  localTemplatePath = "${hostVars.nixConfig}/modules/home-manager/gui/matugen/templates";
+  # Store path, so the generated config doesn't depend on where this repo
+  # happens to be checked out.
+  localTemplatePath = ./templates;
   shellMatugen = config.custom.desktopShell.matugen;
 in
 {

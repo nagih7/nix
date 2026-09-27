@@ -1,21 +1,11 @@
-{ config, pkgs, ... }:
+{ ... }:
 
 {
-  xdg.configFile."fontconfig/conf.d/10-no-sub-pixel.conf".text = ''
-    <?xml version="1.0"?>
-    <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
-    <fontconfig>
-        <match target="font">
-            <edit name="rgba" mode="assign">
-                <const>none</const>
-            </edit>
-        </match>
-    </fontconfig>
-  '';
-
+  # Subpixel/hinting policy is set system-wide in modules/nixos/desktop/fonts.nix
+  # (rgba=none, hinting off); this mirrors it for GTK apps that read dconf.
   dconf.settings = {
     "org/gnome/desktop/interface" = {
-      font-antialiasing = "grayscale"; 
+      font-antialiasing = "grayscale";
       font-hinting = "none";
     };
   };

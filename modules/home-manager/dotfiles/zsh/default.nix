@@ -1,80 +1,68 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
-  # === ZSH MODERN SHELL CONFIGURATION ===
   programs.zsh = {
     enable = true;
-    enableCompletion = true; # Enable advanced tab completion
-    autosuggestion.enable = true; # Enable command autosuggestions based on history
-    syntaxHighlighting.enable = true; # Enable command syntax highlighting
+    enableCompletion = true;
+    # These three pull in the matching zsh-* packages; no need to list them
+    # in home.packages as well.
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+    historySubstringSearch.enable = true;
 
-    # === MODERN ZSH CONFIGURATION ===
     history = {
-      size = 50000; # Increase history size significantly
-      save = 50000; # Save more history to file
-      share = true; # Share history between all zsh sessions
-      ignoreDups = true; # Ignore duplicate entries
-      ignoreSpace = true; # Ignore commands starting with space
-      expireDuplicatesFirst = true; # Remove duplicates first when trimming history
+      size = 50000;
+      save = 50000;
+      share = true;
+      ignoreDups = true;
+      ignoreSpace = true;
+      expireDuplicatesFirst = true;
     };
 
-    # === OH-MY-ZSH INTEGRATION ===
     oh-my-zsh = {
       enable = true;
-
+      # fzf / z / command-not-found are provided by the home-manager modules
+      # below (programs.fzf, programs.zoxide, programs.nix-index).
       plugins = [
-        # === ESSENTIAL PRODUCTIVITY PLUGINS ===
-        "git" # Git aliases and completions
-        "docker" # Docker command completion
-        "docker-compose" # Docker Compose completion
-        "kubectl" # Kubernetes completion
-        "systemd" # Systemd command completion
-        "ssh-agent" # SSH key management
-        "gpg-agent" # GPG key management
-
-        # === NAVIGATION AND SEARCH ===
-        "fzf" # Fuzzy finder integration
-        "z" # Smart directory jumping
-        "web-search" # Quick web searches from terminal
-
-        # === DEVELOPMENT TOOLS ===
-        "node" # Node.js utilities
-        "npm" # NPM completion
-        "python" # Python utilities
-        "rust" # Rust/Cargo completion
-        "golang" # Go development tools
-
-        # === MODERN CLI INTEGRATION ===
-        "colored-man-pages" # Colorized man pages
-        "command-not-found" # Suggest packages for missing commands
-        "history-substring-search" # Better history search
-
-        # === UTILITY PLUGINS ===
-        "extract" # Smart extraction for any archive
-        "copyfile" # Copy file contents to clipboard
-        "copypath" # Copy current path to clipboard
-        "sudo" # Double ESC to add sudo to command
+        "git"
+        "docker"
+        "docker-compose"
+        "kubectl"
+        "systemd"
+        "ssh-agent"
+        "gpg-agent"
+        "web-search"
+        "node"
+        "npm"
+        "python"
+        "rust"
+        "golang"
+        "colored-man-pages"
+        "extract"
+        "copyfile"
+        "copypath"
+        "sudo"
       ];
     };
 
-    # === ADVANCED SHELL ALIASES ===
     shellAliases = {
-      # === FILE OPERATIONS (Enhanced) ===
-      ll = "eza -la --icons --git --header"; # Enhanced long listing
-      la = "eza -a --icons"; # List all with icons
-      lt = "eza -la --icons --git --tree --level=2"; # Tree view
-      lg = "eza -la --icons --git --git-ignore"; # Git-aware listing
+      # === FILE LISTING ===
+      ll = "eza -la --icons --git --header";
+      la = "eza -a --icons";
+      lt = "eza -la --icons --git --tree --level=2";
+      lg = "eza -la --icons --git --git-ignore";
 
       # === MODERN CLI REPLACEMENTS ===
-      ls = "eza --icons --group-directories-first"; # Better ls with icons
-      grep = "rg --color=auto --smart-case"; # Better grep with smart case
-      find = "fd --color=auto"; # Better find
-      du = "dust"; # Modern disk usage
-      df = "duf"; # Modern disk free
-      ps = "procs"; # Modern process viewer
-      top = "htop"; # Modern system monitor
+      ls = "eza --icons --group-directories-first";
+      grep = "rg --color=auto --smart-case";
+      find = "fd --color=auto";
+      du = "dust";
+      df = "duf";
+      ps = "procs";
+      top = "htop";
+      cat = "bat --paging=never";
 
-      # === GIT WORKFLOW (Enhanced) ===
+      # === GIT ===
       g = "git";
       ga = "git add";
       gaa = "git add --all";
@@ -92,7 +80,7 @@
       gst = "git status";
       gcaa = "git add . && git commit --amend --no-edit";
 
-      # === TMUX WORKFLOW (Enhanced) ===
+      # === TMUX ===
       tm = "tmux";
       tma = "tmux attach-session -t";
       tmn = "tmux new-session -s";
@@ -101,42 +89,31 @@
       tmd = "tmux detach";
       tmcls = "rm -rf ~/.tmux/resurrect/*";
 
-      # === NPM WORKFLOW (Enhanced) ===
+      # === NPM ===
       npm-list-global = "npm list -g --depth=0";
       npm-outdated-global = "npm outdated -g";
       npm-update-global = "npm update -g";
 
       # === QUICK UTILITIES ===
-      h = "history"; # Fuzzy history search
-      hg = "history | grep"; # Grep history
-      weather = "curl wttr.in"; # Quick weather
-      ip = "curl ifconfig.me"; # Public IP
-      localip = "ip route get 1 | awk '{print \$7}'"; # Local IP
-      ports = "netstat -tulanp"; # Show open ports
-
-      # === DIRECTORY OPERATIONS ===
-      md = "mkdir -pv"; # Create directory with parents
-      rd = "rmdir"; # Remove directory
-
-      # === FILE VIEWING AND EDITING ===
-      v = "nvim"; # Quick vim
-      e = "\$EDITOR"; # Default editor
-
-      # === CLIPBOARD OPERATIONS ===
-      copy = "wl-copy"; # Copy to clipboard
-      paste = "wl-paste"; # Paste from clipboard
-
-      # === SYSTEM INFO ===
-      sysinfo = "neofetch"; # System information
-      diskinfo = "df -h"; # Disk usage
-      meminfo = "free -h"; # Memory usage
-
-      cat = "bat --paging=never";
+      h = "history";
+      hg = "history | grep";
+      weather = "curl wttr.in";
+      ip = "curl ifconfig.me";
+      localip = "ip route get 1 | awk '{print \$7}'";
+      ports = "netstat -tulanp";
+      md = "mkdir -pv";
+      rd = "rmdir";
+      v = "nvim";
+      e = "\$EDITOR";
+      copy = "wl-copy";
+      paste = "wl-paste";
+      sysinfo = "fastfetch";
+      diskinfo = "df -h";
+      meminfo = "free -h";
     };
 
-    # === ADVANCED ZSH CONFIGURATION ===
     initContent = ''
-      # === MODERN ZSH OPTIONS ===
+      # === OPTIONS ===
       setopt AUTO_CD              # cd to directory by typing name
       setopt AUTO_PUSHD           # automatically push directories to stack
       setopt PUSHD_IGNORE_DUPS    # ignore duplicate directories in stack
@@ -147,81 +124,87 @@
       setopt EXTENDED_GLOB        # extended globbing features
       setopt NUMERIC_GLOB_SORT    # sort globs numerically
 
-      # === HISTORY OPTIMIZATION ===
+      # === HISTORY ===
       setopt HIST_FIND_NO_DUPS    # don't show duplicates in history search
       setopt HIST_REDUCE_BLANKS   # remove unnecessary blanks from history
       setopt HIST_VERIFY          # show command before executing from history
       setopt INC_APPEND_HISTORY   # immediately append to history
 
-      # === COMPLETION ENHANCEMENTS ===
+      # === COMPLETION ===
       setopt COMPLETE_IN_WORD     # complete from both ends of word
       setopt AUTO_MENU            # show completion menu on tab
       setopt AUTO_LIST            # automatically list choices on ambiguous completion
       setopt AUTO_PARAM_SLASH     # add slash after directory names
-      setopt FLOW_CONTROL         # disable flow control (Ctrl+S/Ctrl+Q)
-      unsetopt FLOW_CONTROL
+      unsetopt FLOW_CONTROL       # free Ctrl+S/Ctrl+Q
+      zstyle ':completion:*' menu no
 
       # === KEY BINDINGS (Emacs-style) ===
-      bindkey '^A' beginning-of-line      # Ctrl+A: beginning of line
-      bindkey '^E' end-of-line            # Ctrl+E: end of line
-      bindkey '^R' history-incremental-search-backward  # Ctrl+R: reverse search
-      bindkey '^[[A' history-substring-search-up        # Up arrow: search up
-      bindkey '^[[B' history-substring-search-down      # Down arrow: search down
+      bindkey '^A' beginning-of-line
+      bindkey '^E' end-of-line
+      bindkey '^R' history-incremental-search-backward
+      bindkey '^[[A' history-substring-search-up
+      bindkey '^[[B' history-substring-search-down
 
-      # === FZF INTEGRATION ===
-      if command -v fzf &> /dev/null; then
-        # FZF default options
-        export FZF_DEFAULT_OPTS="
-          --height 40% 
-          --layout=reverse 
-          --border 
-          --preview 'bat --color=always --style=numbers --line-range=:500 {}'
-          --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8
-          --color=fg:#cdd6f4,header:#f38ba8,info:#cba6ac,pointer:#f5e0dc
-          --color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6ac,hl+:#f38ba8"
-        
-        # Use fd for file searching if available
-        if command -v fd &> /dev/null; then
-          export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --hidden --follow --exclude .git'
-          export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-          export FZF_ALT_C_COMMAND='fd --type d . --strip-cwd-prefix --hidden --follow --exclude .git'
-        fi
-      fi
-
-      # === MODERN DIRECTORY NAVIGATION ===
       # Auto ls after cd
       chpwd() {
         emulate -L zsh
         eza --icons --group-directories-first
       }
 
-      # === PERFORMANCE OPTIMIZATIONS ===
-      export HISTFILE="$HOME/.zsh_history"
-      export HISTSIZE=50000
-      export SAVEHIST=50000
-
-      # === PATH ENHANCEMENTS ===
       typeset -U PATH path  # Remove duplicates from PATH
-
-      # === MODERN CLI TOOL PREFERENCES ===
-      export EZA_COLORS="da=36:di=34:fi=0:ln=35:pi=33:so=32:bd=33:cd=33:or=31:mi=31:ex=32"
-
       export PATH="$HOME/.local/bin:$PATH"
-
-      zstyle ':completion:*' menu no
+      export EZA_COLORS="da=36:di=34:fi=0:ln=35:pi=33:so=32:bd=33:cd=33:or=31:mi=31:ex=32"
     '';
   };
 
-  # === ADDITIONAL PACKAGES FOR ZSH ===
-  home.packages = with pkgs; [
-    # === MODERN CLI TOOLS ===
-    zsh-autosuggestions # Command autosuggestions
-    zsh-syntax-highlighting # Syntax highlighting
-    zsh-history-substring-search # Better history search
+  # fzf keybindings/completion (Ctrl+T, Alt+C) + fd as the file source.
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+    defaultCommand = "fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
+    fileWidgetCommand = "fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
+    changeDirWidgetCommand = "fd --type d . --strip-cwd-prefix --hidden --follow --exclude .git";
+    defaultOptions = [
+      "--height 40%"
+      "--layout=reverse"
+      "--border"
+      "--preview 'bat --color=always --style=numbers --line-range=:500 {}'"
+    ];
+    colors = {
+      "bg+" = "#313244";
+      bg = "#1e1e2e";
+      spinner = "#f5e0dc";
+      hl = "#f38ba8";
+      fg = "#cdd6f4";
+      header = "#f38ba8";
+      info = "#cba6ac";
+      pointer = "#f5e0dc";
+      marker = "#f5e0dc";
+      "fg+" = "#cdd6f4";
+      prompt = "#cba6ac";
+      "hl+" = "#f38ba8";
+    };
+  };
 
-    # === ENHANCED CLI TOOLS ===
-    dust # Modern du replacement
-    duf # Modern df replacement
-    procs # Modern ps replacement
+  # `z` / `zi` directory jumping (replaces the oh-my-zsh `z` plugin).
+  programs.zoxide = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  programs.bat.enable = true;
+
+  # command-not-found handler backed by nix-index (the channel-based
+  # programs.command-not-found has no database on a flake system).
+  # Run `nix-index` once (or subscribe to nix-index-database) to build it.
+  programs.nix-index = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  home.packages = with pkgs; [
+    dust # du
+    duf # df
+    procs # ps
   ];
 }

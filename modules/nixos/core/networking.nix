@@ -1,9 +1,12 @@
-{ lib, hostVars, ... }:
+{ config, ... }:
 
+let
+  host = config.host;
+in
 {
   networking = {
-    hostName = hostVars.hostname;
-    nameservers = hostVars.nameservers;
+    hostName = host.hostname;
+    nameservers = host.nameservers;
 
     networkmanager = {
       enable = true;
@@ -16,32 +19,21 @@
 
     firewall = {
       enable = true;
-      allowedTCPPorts = hostVars.firewall.tcp_ports;
-      allowedUDPPorts = hostVars.firewall.udp_ports;
-      allowedTCPPortRanges = [
-        {
-          from = 9757;
-          to = 9757;
-        }
-      ];
-      trustedInterfaces = hostVars.firewall.trusted_interfaces;
+      allowedTCPPorts = host.firewall.tcpPorts;
+      allowedUDPPorts = host.firewall.udpPorts;
+      trustedInterfaces = host.firewall.trustedInterfaces;
       checkReversePath = "loose";
     };
   };
 
-  # Disable NSCD (Name Service Cache Daemon) to avoid conflicts
-  services.nscd.enable = false;
+  systemd.services.NetworkManager-wait-online.enable = true;
 
-  # Force empty NSS modules (often done to fix specific glibc/flake issues)
-  system.nssModules = lib.mkForce [ ];
-
-  systemd.services.NetworkManager-wait-online = {
-    enable = true;
-  };
-  
   # Ensure DNS target is reached before NM activates autoconnect VPNs
   systemd.services."nm-dispatcher" = {
-    after = [ "network-online.target" "nss-lookup.target" ];
+    after = [
+      "network-online.target"
+      "nss-lookup.target"
+    ];
     wants = [ "network-online.target" ];
   };
 }

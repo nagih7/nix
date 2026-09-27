@@ -1,16 +1,31 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   # === BASIC SECURITY CONFIGURATION ===
   security = {
     polkit.enable = true;
     sudo.wheelNeedsPassword = true;
-    allowUserNamespaces = true;
+    chromiumSuidSandbox.enable = true;
   };
 
+  # === GNOME KEYRING (org.freedesktop.secrets) ===
+  # The keyring is unlocked by PAM on the services that actually authenticate
+  # the graphical session: SDDM at login and hyprlock on unlock. Everything
+  # else (VS Code, Chrome, secret-tool, git-credential-libsecret) then talks
+  # to the daemon over D-Bus without a second password prompt.
   services.gnome.gnome-keyring.enable = true;
-
-  security.chromiumSuidSandbox.enable = true;
+  security.pam.services = {
+    sddm.enableGnomeKeyring = true;
+    login.enableGnomeKeyring = true;
+    # Without this /etc/pam.d/hyprlock doesn't exist and hyprlock silently
+    # falls back to /etc/pam.d/su, which uses a different (and wrong) stack.
+    hyprlock.enableGnomeKeyring = true;
+  };
 
   boot.kernel.sysctl = {
     "user.max_user_namespaces" = 15000;
@@ -19,17 +34,14 @@
 
   # === SSH SECURITY HARDENING ===
   services.openssh = {
-    enable = true; # Enable SSH daemon for remote access
+    enable = true;
     settings = {
-      PasswordAuthentication = false; # Disable password login (key-only authentication)
-      PermitRootLogin = "no"; # Disable direct root login for security
+      PasswordAuthentication = false; # key-only authentication
+      PermitRootLogin = "no";
     };
   };
 
-  environment.systemPackages = with pkgs; [
-    agenix-cli # Secure secret management tool
-  ];
-
+  # Local Caddy CA for *.nagih.cloud services on the LAN.
   security.pki.certificates = [
     ''
       -----BEGIN CERTIFICATE-----
@@ -46,4 +58,3 @@
     ''
   ];
 }
-

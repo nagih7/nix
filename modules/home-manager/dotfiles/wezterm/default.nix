@@ -76,31 +76,30 @@ in
   # Without this, wezterm errors at launch because color_scheme="MaterialYou"
   # references a missing scheme. Matugen overwrites this on the next wallpaper
   # change with the real palette.
-  home.activation.seedWeztermMaterialYou =
-    config.lib.dag.entryAfter [ "writeBoundary" ] ''
-      target="${config.home.homeDirectory}/.config/wezterm/colors/MaterialYou.toml"
-      if [ ! -e "$target" ]; then
-        $DRY_RUN_CMD mkdir -p "$(dirname "$target")"
-        $DRY_RUN_CMD install -m 0644 \
-          ${pkgs.writeText "wezterm-materialyou-seed" ''
-            # Placeholder until matugen generates the real palette on next
-            # wallpaper change. Neutral dark scheme, not Catppuccin.
-            [colors]
-            foreground = "#e6e1e5"
-            background = "#1c1b1f"
-            cursor_bg  = "#d0bcff"
-            cursor_fg  = "#381e72"
-            cursor_border = "#d0bcff"
-            selection_bg = "#4f378b"
-            selection_fg = "#eaddff"
-            ansi    = ["#1c1b1f","#f2b8b5","#a6c8a4","#e8c184","#9ecaff","#d0bcff","#a3d4d4","#cac4d0"]
-            brights = ["#938f99","#f2b8b5","#a6c8a4","#e8c184","#9ecaff","#d0bcff","#a3d4d4","#e6e1e5"]
-            [metadata]
-            name = "MaterialYou"
-            author = "seed"
-          ''} "$target"
-      fi
-    '';
+  home.activation.seedWeztermMaterialYou = config.lib.dag.entryAfter [ "writeBoundary" ] ''
+    target="${config.home.homeDirectory}/.config/wezterm/colors/MaterialYou.toml"
+    if [ ! -e "$target" ]; then
+      $DRY_RUN_CMD mkdir -p "$(dirname "$target")"
+      $DRY_RUN_CMD install -m 0644 \
+        ${pkgs.writeText "wezterm-materialyou-seed" ''
+          # Placeholder until matugen generates the real palette on next
+          # wallpaper change. Neutral dark scheme, not Catppuccin.
+          [colors]
+          foreground = "#e6e1e5"
+          background = "#1c1b1f"
+          cursor_bg  = "#d0bcff"
+          cursor_fg  = "#381e72"
+          cursor_border = "#d0bcff"
+          selection_bg = "#4f378b"
+          selection_fg = "#eaddff"
+          ansi    = ["#1c1b1f","#f2b8b5","#a6c8a4","#e8c184","#9ecaff","#d0bcff","#a3d4d4","#cac4d0"]
+          brights = ["#938f99","#f2b8b5","#a6c8a4","#e8c184","#9ecaff","#d0bcff","#a3d4d4","#e6e1e5"]
+          [metadata]
+          name = "MaterialYou"
+          author = "seed"
+        ''} "$target"
+    fi
+  '';
 
   # === DESKTOP INTEGRATION ===
   xdg.desktopEntries."wezterm-here" = {

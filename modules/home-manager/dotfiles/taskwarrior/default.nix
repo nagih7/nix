@@ -40,7 +40,7 @@
       "dateformat.report" = "Y-M-D";
       "dateformat.holiday" = "Y-M-D";
       "dateformat.annotation" = "Y-M-D H:N";
-      
+
       # Urgency Coefficients
       "urgency.user.tag.next.coefficient" = "15.0";
       "urgency.user.tag.today.coefficient" = "12.0";
@@ -65,7 +65,8 @@
       "report.inbox.filter" = "status:pending limit:page project: tags.none: ";
 
       "report.today.description" = "Tasks to do today";
-      "report.today.columns" = "id,start.age,entry.age,depends,priority,project,tags,recur,scheduled.countdown,due.relative,until.remaining,description,urgency";
+      "report.today.columns" =
+        "id,start.age,entry.age,depends,priority,project,tags,recur,scheduled.countdown,due.relative,until.remaining,description,urgency";
       "report.today.labels" = "ID,Active,Age,Deps,P,Project,Tags,Recur,S,Due,Until,Description,Urg";
       "report.today.sort" = "urgency-";
       "report.today.filter" = "status:pending and ( +today or due.before:eod )";

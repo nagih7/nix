@@ -18,6 +18,7 @@
     agenix = {
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
 
     nagih7-dots = {
@@ -37,6 +38,7 @@
 
     claude-desktop = {
       url = "github:aaddrick/claude-desktop-debian";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -52,29 +54,30 @@
     let
       lib = nixpkgs.lib;
 
+      systemVars = import ./variables.nix;
+      system = "${systemVars.isa}-${systemVars.os}";
+
+      # Every directory under ./hosts (except common/) is a host. Adding a
+      # host = adding hosts/<name>/{default,variables,hardware-configuration}.nix.
+      hostNames = lib.attrNames (
+        lib.filterAttrs (name: type: type == "directory" && name != "common") (builtins.readDir ./hosts)
+      );
+
+      # One pkgs shared by NixOS and Home Manager so they can never drift.
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+        overlays = [ (import ./overlays { inherit inputs system; }) ];
+      };
+
       mkMachine =
         hostName: userName:
         let
-          systemVars = import ./variables.nix;
           hostVars = import ./hosts/${hostName}/variables.nix;
-          system = "${systemVars.isa}-${systemVars.os}";
 
           userObj = lib.findFirst (
             u: u.username == userName
           ) (throw "User ${userName} not found in ${hostName}/variables.nix") (hostVars.users or [ ]);
-
-          unstable-overlay = final: prev: {
-            unstable = import nixpkgs-unstable {
-              inherit system;
-              config.allowUnfree = true;
-            };
-          };
-
-          pkgs = import nixpkgs {
-            inherit system;
-            config.allowUnfree = true;
-            overlays = [ unstable-overlay ];
-          };
 
           customArgs = {
             inherit
@@ -94,64 +97,52 @@
               claude-desktop
               ;
           };
-
         in
         {
           nixos = lib.nixosSystem {
             inherit system;
             specialArgs = customArgs;
             modules = [
+              { nixpkgs.pkgs = pkgs; }
               ./hosts/${hostName}
-              ./modules/nixos/default.nix
+              ./modules/nixos
               agenix.nixosModules.default
-              {
-                nixpkgs.overlays = [ unstable-overlay ];
-                nixpkgs.config.allowUnfree = true;
-              }
             ];
           };
 
-          # --- HOME CONFIGURATION ---
           home = home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
             extraSpecialArgs = customArgs;
             modules = [
-              ./home/${userName}/default.nix
-              ./modules/home-manager/default.nix
+              ./home/${userName}
+              ./modules/home-manager
             ];
           };
         };
 
-      desktop = mkMachine "desktop" "nagih";
-      laptop = mkMachine "laptop" "nagih";
-
+      machines = lib.genAttrs hostNames (host: mkMachine host "nagih");
     in
     {
-      nixosConfigurations = {
-        desktop = desktop.nixos;
-        laptop = laptop.nixos;
-      };
+      nixosConfigurations = lib.mapAttrs (_: m: m.nixos) machines;
 
-      homeConfigurations = {
-        "nagih@desktop" = desktop.home;
-        "nagih@laptop" = laptop.home;
-      };
+      homeConfigurations = lib.mapAttrs' (host: m: lib.nameValuePair "nagih@${host}" m.home) machines;
 
-      devShells = lib.genAttrs [ "x86_64-linux" "aarch64-linux" ] (
-        system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-        in
-        {
-          default = pkgs.mkShell {
-            buildInputs = [
-              pkgs.nixos-rebuild
-              home-manager.packages.${system}.home-manager
-              pkgs.just
-              pkgs.sops
-            ];
-          };
-        }
-      );
+      formatter.${system} = pkgs.nixfmt-tree;
+
+      checks.${system} =
+        lib.mapAttrs' (
+          host: m: lib.nameValuePair "nixos-${host}" m.nixos.config.system.build.toplevel
+        ) machines
+        // lib.mapAttrs' (host: m: lib.nameValuePair "home-${host}" m.home.activationPackage) machines;
+
+      devShells.${system}.default = pkgs.mkShell {
+        packages = [
+          pkgs.nixfmt-tree
+          pkgs.nixd
+          pkgs.nh
+          agenix.packages.${system}.default
+          home-manager.packages.${system}.home-manager
+        ];
+      };
     };
 }
