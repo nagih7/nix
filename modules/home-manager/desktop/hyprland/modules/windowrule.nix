@@ -11,7 +11,7 @@
 # Match conditions live under `match`; `float`/`fullscreen` ARE valid match keys
 # in Lua (unlike the hyprlang shim), so the floating-based rules work again.
 
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   wayland.windowManager.hyprland = {
@@ -61,17 +61,19 @@
           size = "60% 65%";
         }
 
-        # --- System Tools (Pavucontrol, Network, Bluetooth) ---
+        # --- System Tools (pwvucontrol, Network, Bluetooth) ---
+        # pwvucontrol (com.saivert.pwvucontrol) replaced pavucontrol as
+        # caelestia's kbAudioSettings target — see dotfiles/caelestia-shell.
         {
-          match.class = "^(pavucontrol|org\\.pulseaudio\\.pavucontrol|nm-connection-editor|blueberry\\.py|guifetch|bluedevilwizard)$";
+          match.class = "^(com\\.saivert\\.pwvucontrol|nm-connection-editor|blueberry\\.py|guifetch|bluedevilwizard)$";
           float = true;
         }
         {
-          match.class = "^(pavucontrol|org\\.pulseaudio\\.pavucontrol|nm-connection-editor|Zotero)$";
+          match.class = "^(com\\.saivert\\.pwvucontrol|nm-connection-editor|Zotero)$";
           size = "45% 45%";
         }
         {
-          match.class = "^(pavucontrol|org\\.pulseaudio\\.pavucontrol|nm-connection-editor)$";
+          match.class = "^(com\\.saivert\\.pwvucontrol|nm-connection-editor)$";
           center = true;
         }
         {
@@ -206,6 +208,14 @@
       ];
 
       # ######## Layer Rules ########
+      # Namespaces below prefixed "quickshell:" are end-4/ii's; caelestia
+      # uses "caelestia-*" and ships its own equivalent rules directly in
+      # caelestia-dots' hypr/hyprland/rules.lua (folded into
+      # desktopShell.hyprland.generalConfig by providers/caelestia), so
+      # these are only relevant when ii is the active provider. (A prior,
+      # pre-ii AGS-based setup's own bare bar/dock/sideleft/... namespace
+      # rules lived here too; those matched neither ii nor caelestia and
+      # were removed outright rather than gated.)
       layer_rule = [
         # --- General ---
         {
@@ -238,28 +248,9 @@
           match.namespace = "^(notifications)$";
           ignore_alpha = 0.69;
         }
-
-        # --- AGS / Bar / Dock ---
-        {
-          match.namespace = "^(session[0-9]*|bar[0-9]*|dock[0-9]*|overview[0-9]*|barcorner.*|cheatsheet[0-9]*|sideright[0-9]*|sideleft[0-9]*|indicator.*|osk[0-9]*)$";
-          blur = true;
-        }
-        {
-          match.namespace = "^(bar[0-9]*|dock[0-9]*|overview[0-9]*|barcorner.*|cheatsheet[0-9]*|sideright[0-9]*|sideleft[0-9]*|indicator.*|osk[0-9]*)$";
-          ignore_alpha = 0.6;
-        }
-
-        # --- AGS Animations ---
-        {
-          match.namespace = "^(sideleft.*)$";
-          animation = "slide left";
-        }
-        {
-          match.namespace = "^(sideright.*)$";
-          animation = "slide right";
-        }
-
-        # ######## Quickshell Rules ########
+      ]
+      ++ lib.optionals (config.custom.desktopShell.name == "ii") [
+        # ######## Quickshell (ii) Rules ########
         {
           match.namespace = "^(quickshell:.*)$";
           blur_popups = true;

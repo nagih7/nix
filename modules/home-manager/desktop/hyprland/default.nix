@@ -42,5 +42,15 @@ in
     "hypr/hyprland/keybinds.conf" = lib.mkIf (shellHyprland.keybindsConfFile != null) {
       source = shellHyprland.keybindsConfFile;
     };
+
+    # Shared Lua modules `require()`d by name from inside generalConfig /
+    # envConfig / keybindsConfig (caelestia's hypr/ tree); must sit at their
+    # native ~/.config/hypr/ path for Hyprland's Lua `require` to find them.
+    "hypr/utils" = lib.mkIf (shellHyprland.utilsDir != null) {
+      source = shellHyprland.utilsDir;
+    };
+    "hypr/variables.lua" = lib.mkIf (shellHyprland.variablesFile != null) {
+      source = shellHyprland.variablesFile;
+    };
   };
 }

@@ -18,41 +18,29 @@ in
   imports = [
     ../common
     ../../modules/home-manager/apps/beekeeper-studio.nix
-    ../../modules/home-manager/apps/cisco-packet-tracer.nix
+    # ../../modules/home-manager/apps/cisco-packet-tracer.nix
   ];
 
   home.packages = with pkgs; [
     inputs.zen-browser.packages.${system}.default
     inputs.claude-desktop.packages.${system}.default
     pkgs.unstable.discord
-    pkgs.unstable.spotify
     pkgs.unstable.vscode
-    pkgs.unstable.antigravity
     pkgs.unstable.telegram-desktop
     pkgs.unstable.slack
     pkgs.unstable.obsidian
     pkgs.unstable.teams-for-linux
-    pkgs.unstable.hugo
     pkgs.unstable.bruno
-    pkgs.unstable.google-chrome
-    pkgs.nodejs_24
     pkgs.yarn
     pkgs.unstable.claude-code
-    pkgs.unstable.gemini-cli
-    pkgs.unstable.github-copilot-cli
-    pkgs.unstable.qwen-code
-    pkgs.unstable.codex
     pkgs.unstable.livecaptions
     pkgs.unstable.kmidimon
     fluidsynth
     qpwgraph
-    zed-editor
     udisks
     calibre
     awscli2
-    talosctl
     wireguard-tools
-    wireguard-ui
     jellyfin
     syncplay
     unrar
@@ -60,12 +48,12 @@ in
     drawio
     virt-viewer
     omnissa-horizon-client
-    (prismlauncher.override {
-      jdks = [
-        jdk
-        jdk17
-      ];
-    })
+    # (prismlauncher.override {
+    #   jdks = [
+    #     jdk
+    #     jdk17
+    #   ];
+    # })
     (writeShellScriptBin "kfx-convert" ''
       set -euo pipefail
 
@@ -139,47 +127,6 @@ in
         userKnownHostsFile = "/dev/null";
         proxyCommand = "sh -c '${pkgs.awscli2}/bin/aws ssm start-session --target %h --document-name AWS-StartSSHSession --parameters \"portNumber=%p\"'";
       };
-    };
-  };
-
-  # Syncthing is per-user state, not host metadata.
-  services.syncthing = {
-    enable = true;
-
-    settings = {
-      gui = {
-        address = "127.0.0.1:8384";
-        user = "nagih";
-      };
-
-      devices = {
-        "nixos-desktop" = {
-          id = "CQA7ZJT-S4HOWZ5-TZLMHEC-B7XGZB4-XWVA7BM-IPR3RPL-SCTFXIA-O6GSHQQ";
-        };
-        "syncthing-server" = {
-          id = "6DLXC5P-OYUDW5M-7NYJOSU-3DHKU65-2KECRVD-MEVDAF4-CYTOJWE-7NJXFAF";
-          addresses = [ "tcp://14.225.218.83:22000" ];
-        };
-      };
-
-      # Folder IDs must stay exactly as the server knows them.
-      folders =
-        let
-          shared = id: dir: {
-            inherit id;
-            path = "/home/nagih/${dir}";
-            devices = [
-              "nixos-desktop"
-              "syncthing-server"
-            ];
-          };
-        in
-        {
-          workspaces = shared "workspaces" "Workspaces";
-          documents = shared "documents" "Documents";
-          pictures = shared "pictures" "Pictures";
-          hugo = shared "hugo" "hugo";
-        };
     };
   };
 }

@@ -13,6 +13,7 @@
   lib,
   pkgs,
   end-4-dots,
+  caelestia-dots,
   systemVars,
   ...
 }:
@@ -43,6 +44,13 @@ let
         keybindsConfig = opt types.lines;
         scriptsDir = opt types.path;
         keybindsConfFile = opt types.path;
+        # caelestia's hypr/ tree splits shared modules out of the files
+        # above (`require("variables")`, `require("utils.functions")`)
+        # instead of end-4's fully self-contained per-file style; these two
+        # need to exist on disk at their native ~/.config/hypr/ path for
+        # those `require()` calls to resolve; see providers/caelestia.
+        utilsDir = opt types.path;
+        variablesFile = opt types.path;
       };
 
       hyprlock.finalConfig = opt types.lines;
@@ -54,12 +62,21 @@ let
 
       kde.kdeglobalsSeed = opt types.lines;
       dolphin.rcPath = opt types.path;
-      hypridle.finalConfig = opt types.lines;
+      hypridle = {
+        finalConfig = opt types.lines;
+        # null means "defer to whatever every other provider has assumed so
+        # far": stay enabled with home-manager's defaults. A provider with
+        # its own idle/lock manager (e.g. caelestia-shell's IdleMonitors.qml)
+        # sets this to false instead, since running both fights over the
+        # same DPMS/suspend/lock triggers.
+        enable = opt types.bool;
+      };
     };
   };
 
   providers = {
     ii = import ./providers/ii { inherit config pkgs end-4-dots; };
+    caelestia = import ./providers/caelestia { inherit pkgs lib caelestia-dots; };
   };
 in
 {

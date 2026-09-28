@@ -31,6 +31,18 @@
       flake = false;
     };
 
+    # Local clones (see modules/home-manager/desktop-shell/providers/caelestia)
+    # while trying out the caelestia-dots shell before pointing at upstream.
+    caelestia-shell = {
+      url = "git+file:///home/nagih/Workspaces/config/caelestia-dots";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    caelestia-dots = {
+      url = "git+file:///home/nagih/Workspaces/config/caelestia";
+      flake = false;
+    };
+
     zen-browser = {
       url = "github:youwen5/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -93,6 +105,8 @@
               agenix
               nagih7-dots
               end-4-dots
+              caelestia-shell
+              caelestia-dots
               zen-browser
               claude-desktop
               ;

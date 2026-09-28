@@ -11,9 +11,10 @@
 
     # Dotfiles
     ./dotfiles/quickshell
+    ./dotfiles/caelestia-shell
     ./dotfiles/zsh
     ./dotfiles/nvim
-    ./dotfiles/wezterm
+    ./dotfiles/alacritty
     ./dotfiles/tmux
     ./dotfiles/git
     ./dotfiles/fcitx5
@@ -23,7 +24,7 @@
     ./dotfiles/ripgrep
     ./dotfiles/starship
     ./dotfiles/cava
-    ./dotfiles/kitty
+    ./dotfiles/spicetify
     ./dotfiles/qimgv
     ./dotfiles/dolphin
     ./dotfiles/taskwarrior

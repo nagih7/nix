@@ -17,7 +17,7 @@
   wayland.windowManager.hyprland = {
     settings = {
       "$qsConfig" = "ii";
-      "$terminal" = "wezterm";
+      "$terminal" = "alacritty";
       "$fileManager" = "dolphin";
       "$browser" = "zen";
       "$codeEditor" = "code";

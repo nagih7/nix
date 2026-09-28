@@ -35,7 +35,6 @@
     gcc # treesitter parser builds
 
     # Other Utilities
-    ranger
     lua51Packages.lua
     luarocks
     github-cli

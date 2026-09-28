@@ -7,5 +7,5 @@
 
   # Active desktop shell provider — see
   # modules/home-manager/desktop-shell/providers/
-  desktopShell = "ii";
+  desktopShell = "caelestia";
 }

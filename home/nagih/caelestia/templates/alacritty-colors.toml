@@ -1,0 +1,39 @@
+# Custom caelestia-cli template — see ./README.md for the mechanism.
+# Regenerated on every scheme/wallpaper change; output written to
+# ~/.local/state/caelestia/theme/alacritty-colors.toml, imported by
+# Alacritty's own config (modules/home-manager/dotfiles/alacritty).
+#
+# term0-7 = normal black..white, term8-15 = bright black..white (standard
+# 16-colour ANSI mapping) — same convention scheme.json itself already uses.
+
+[colors.primary]
+background = "#{{ background.hex }}"
+foreground = "#{{ onBackground.hex }}"
+
+[colors.cursor]
+text = "#{{ background.hex }}"
+cursor = "#{{ primary.hex }}"
+
+[colors.selection]
+text = "#{{ onSurface.hex }}"
+background = "#{{ secondaryContainer.hex }}"
+
+[colors.normal]
+black = "#{{ term0.hex }}"
+red = "#{{ term1.hex }}"
+green = "#{{ term2.hex }}"
+yellow = "#{{ term3.hex }}"
+blue = "#{{ term4.hex }}"
+magenta = "#{{ term5.hex }}"
+cyan = "#{{ term6.hex }}"
+white = "#{{ term7.hex }}"
+
+[colors.bright]
+black = "#{{ term8.hex }}"
+red = "#{{ term9.hex }}"
+green = "#{{ term10.hex }}"
+yellow = "#{{ term11.hex }}"
+blue = "#{{ term12.hex }}"
+magenta = "#{{ term13.hex }}"
+cyan = "#{{ term14.hex }}"
+white = "#{{ term15.hex }}"

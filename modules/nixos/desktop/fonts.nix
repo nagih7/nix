@@ -4,7 +4,8 @@
   fonts = {
     enableDefaultPackages = true;
     packages = with pkgs; [
-      inter
+      sf-pro # overlays/default.nix — Apple's own font, see there for licensing note
+      inter # kept as fallback (open-licensed, in case sf-pro is ever dropped)
       noto-fonts
       jetbrains-mono
       nerd-fonts.jetbrains-mono
@@ -30,6 +31,7 @@
 
       defaultFonts = {
         sansSerif = [
+          "SF Pro Text"
           "Inter"
           "DejaVu Sans"
         ];

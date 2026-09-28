@@ -22,7 +22,8 @@
   hardware.firmware = [ pkgs.sof-firmware ];
 
   environment.systemPackages = with pkgs; [
-    pavucontrol
+    # pwvucontrol replaced pavucontrol — installed via home-manager
+    # (dotfiles/caelestia-shell, caelestia's kbAudioSettings target)
     alsa-utils
     easyeffects
     pulseaudio

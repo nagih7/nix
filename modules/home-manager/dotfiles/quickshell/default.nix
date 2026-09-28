@@ -94,6 +94,14 @@ let
   };
 
   venvLink = "${config.home.homeDirectory}/.local/state/quickshell/.venv";
+
+  # The Python venv (iiPython/iiVenv) exists purely for end-4-dots' own
+  # helper scripts (colour generation, wallpaper analysis…) — a provider
+  # that doesn't ship those (e.g. caelestia, a compiled package with its own
+  # CLI) has no use for it. Nix only builds what's actually referenced
+  # below, so gating the *reference* here is enough to drop the whole
+  # opencv4/numpy/etc closure — no need to also guard the `let` bindings.
+  isIi = shell.name == "ii";
 in
 {
   imports = [
@@ -104,28 +112,35 @@ in
 
   home.packages = [ quickshellWrapped ];
 
-  xdg.configFile."quickshell".source = shell.quickshell.configSource;
+  # null means the active shell provider doesn't use this raw-QML-tree
+  # mechanism (e.g. caelestia-shell ships as a compiled package instead —
+  # see dotfiles/caelestia-shell).
+  xdg.configFile."quickshell" = lib.mkIf (shell.quickshell.configSource != null) {
+    source = shell.quickshell.configSource;
+  };
 
   home.sessionVariables = {
     # Session-wide Qt behaviour (not quickshell-specific).
     QT_QPA_PLATFORM = "wayland;xcb";
     QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
 
+    # Flatpak exports; set here (not hl.env) so $XDG_DATA_DIRS expands.
+    XDG_DATA_DIRS = "$HOME/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:$XDG_DATA_DIRS";
+  } // lib.optionalAttrs isIi {
     # The shell provider's env.lua also points Hyprland-spawned processes at
     # this path, so keep the two in sync via the symlink below.
     ILLOGICAL_IMPULSE_VIRTUAL_ENV = venvLink;
-
-    # Flatpak exports; set here (not hl.env) so $XDG_DATA_DIRS expands.
-    XDG_DATA_DIRS = "$HOME/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:$XDG_DATA_DIRS";
   };
 
   # Point the venv path the ii scripts expect at the store-backed one,
   # replacing any pip-managed venv from earlier generations.
-  home.activation.linkQuickshellVenv = config.lib.dag.entryAfter [ "writeBoundary" ] ''
-    $DRY_RUN_CMD mkdir -p "$(dirname "${venvLink}")"
-    if [ -e "${venvLink}" ] && [ ! -L "${venvLink}" ]; then
-      $DRY_RUN_CMD rm -rf "${venvLink}"
-    fi
-    $DRY_RUN_CMD ln -sfn "${iiVenv}" "${venvLink}"
-  '';
+  home.activation.linkQuickshellVenv = lib.mkIf isIi (
+    config.lib.dag.entryAfter [ "writeBoundary" ] ''
+      $DRY_RUN_CMD mkdir -p "$(dirname "${venvLink}")"
+      if [ -e "${venvLink}" ] && [ ! -L "${venvLink}" ]; then
+        $DRY_RUN_CMD rm -rf "${venvLink}"
+      fi
+      $DRY_RUN_CMD ln -sfn "${iiVenv}" "${venvLink}"
+    ''
+  );
 }
