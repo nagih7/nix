@@ -29,11 +29,39 @@ let
   active = shell.name == "caelestia";
   home = config.home.homeDirectory;
   outOfStore = config.lib.file.mkOutOfStoreSymlink;
+  shellJsonDefaults = config.custom.caelestiaShell.shellJsonDefaults;
+  shellJsonDefaultsFile = pkgs.writeText "caelestia-shell-json-defaults.json" (
+    builtins.toJSON shellJsonDefaults
+  );
 in
 {
   imports = [ caelestia-shell.homeManagerModules.default ];
 
-  programs.caelestia = lib.mkIf active {
+  # Mixing a top-level `options` declaration with plain flat config keys
+  # (programs.*, xdg.*, home.*, ...) in the same returned set isn't
+  # supported by the module system ("unsupported attribute" eval error,
+  # confirmed) — everything below has to move under an explicit `config`
+  # once `options` is declared here.
+  options.custom.caelestiaShell.shellJsonDefaults = lib.mkOption {
+    type = lib.types.attrs;
+    default = { };
+    example = {
+      osd = {
+        enableMicrophone = true;
+        enableBrightness = false;
+      };
+    };
+    description = ''
+      One-time seed defaults for ~/.config/caelestia/shell.json, declared
+      centrally (e.g. in home/nagih/default.nix) instead of hand-editing
+      the live file. See the seedShellJsonDefaults activation script below
+      for exactly how and when these get applied (short version: only
+      fills in keys that are genuinely missing from the live file, once;
+      never overwrites an existing value, including an explicit `false`).
+    '';
+  };
+
+  config.programs.caelestia = lib.mkIf active {
     enable = true;
     cli.enable = true;
     # Never set cli.settings/cli.extraConfig (or settings/extraConfig for
@@ -58,7 +86,7 @@ in
   # shell-script-only (relies on `$XDG_DATA_DIRS` expansion), which doesn't
   # work in a unit file's literal `Environment=`. systemd.user.sessionVariables
   # (environment.d) is what actually reaches every systemd --user unit.
-  systemd.user.sessionVariables = lib.mkIf active {
+  config.systemd.user.sessionVariables = lib.mkIf active {
     XDG_DATA_DIRS = lib.concatStringsSep ":" [
       "${home}/.local/share/flatpak/exports/share"
       "/var/lib/flatpak/exports/share"
@@ -80,7 +108,7 @@ in
   # keybinding.nix's own contributions land relative to each other. Without
   # this, hypr-vars.lua is silently inert — confirmed empirically (it never
   # appears in `nix eval ...extraConfig`'s output before this fix).
-  wayland.windowManager.hyprland.extraConfig = lib.mkIf active (
+  config.wayland.windowManager.hyprland.extraConfig = lib.mkIf active (
     lib.mkMerge [
       (lib.mkBefore ''
         package.path = package.path .. ";${home}/.config/caelestia/?.lua"
@@ -99,7 +127,7 @@ in
     ]
   );
 
-  home.packages = lib.mkIf active (
+  config.home.packages = lib.mkIf active (
     with pkgs;
     [
       # Referenced directly by hypr/variables.lua / execs.lua / keybinds.lua.
@@ -134,7 +162,7 @@ in
   # the same problem hypr/scheme/current.lua has below. Leave them fully
   # unmanaged (or seed once, like scheme/current.lua) if you want them at
   # all — never a live repo symlink.
-  xdg.configFile = lib.mkIf active {
+  config.xdg.configFile = lib.mkIf active {
     "caelestia/hypr-vars.lua".source = outOfStore "${hostVars.nixConfig}/home/nagih/caelestia/hypr-vars.lua";
     "caelestia/hypr-user.lua".source = outOfStore "${hostVars.nixConfig}/home/nagih/caelestia/hypr-user.lua";
     "caelestia/cli.json".source = outOfStore "${hostVars.nixConfig}/home/nagih/caelestia/cli.json";
@@ -147,12 +175,47 @@ in
   # git tree on every wallpaper change) — seed it once from caelestia-dots'
   # own default.lua and leave it alone after that, same as caelestia's own
   # non-Nix install does.
-  home.activation.setupCaelestiaHypr = lib.mkIf active (
+  config.home.activation.setupCaelestiaHypr = lib.mkIf active (
     config.lib.dag.entryAfter [ "writeBoundary" ] ''
       $DRY_RUN_CMD mkdir -p "${home}/.config/hypr/scheme" "${home}/Pictures/Wallpapers"
 
       if [ ! -f "${home}/.config/hypr/scheme/current.lua" ]; then
         $DRY_RUN_CMD install -m 0644 "${caelestia-dots}/hypr/scheme/default.lua" "${home}/.config/hypr/scheme/current.lua"
+      fi
+    ''
+  );
+
+  # Applies custom.caelestiaShell.shellJsonDefaults (declared above, values
+  # set in home/nagih/default.nix) to the live shell.json. Can't manage
+  # shell.json itself the normal way (see the comment on xdg.configFile
+  # above — caelestia-shell's C++ plugin rewrites the whole file on any
+  # settings change) or via programs.caelestia.settings (same collision,
+  # already warned against above).
+  #
+  # `defaults * current` is jq's recursive/deep object merge, right side
+  # wins on any key both sides define — so every key already present in
+  # the live file (regardless of its value, including an explicit `false`)
+  # always survives untouched; only keys genuinely missing get filled in
+  # from `defaults`. Runs on every switch, but only actually writes when
+  # the merge produces a real diff (first run for a given key, or a fresh/
+  # reset shell.json) — cmp against the merge output first, same idea as
+  # `git diff --exit-code` gating a commit.
+  config.home.activation.seedShellJsonDefaults = lib.mkIf (active && shellJsonDefaults != { }) (
+    config.lib.dag.entryAfter [ "writeBoundary" ] ''
+      target="${home}/.config/caelestia/shell.json"
+      tmp="$target.tmp"
+      jq="${pkgs.jq}/bin/jq"
+
+      $DRY_RUN_CMD mkdir -p "$(dirname "$target")"
+      [ -f "$target" ] || $DRY_RUN_CMD sh -c "echo '{}' > '$target'"
+
+      $DRY_RUN_CMD sh -c "\"$jq\" -s '.[0] * .[1]' '${shellJsonDefaultsFile}' '$target' > '$tmp'"
+
+      if [ -f "$tmp" ] && ! cmp -s "$target" "$tmp"; then
+        $VERBOSE_ECHO "Seeding shell.json defaults from custom.caelestiaShell.shellJsonDefaults (first run only, per-key)"
+        $DRY_RUN_CMD mv "$tmp" "$target"
+      else
+        $DRY_RUN_CMD rm -f "$tmp"
       fi
     ''
   );

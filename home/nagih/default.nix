@@ -17,6 +17,7 @@ in
 
   imports = [
     ../common
+    ./caelestia
     ../../modules/home-manager/apps/beekeeper-studio.nix
     # ../../modules/home-manager/apps/cisco-packet-tracer.nix
   ];
