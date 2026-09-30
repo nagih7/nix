@@ -67,7 +67,7 @@ return {
   -- Modifier only, the actual binds will be mod + 0-9. These should be strings and not arrays.
   kbGoToWs                   = "SUPER",
   kbGoToWsGroup              = "CTRL + SUPER",
-  kbMoveWinToWs              = "SUPER + ALT",
+  kbMoveWinToWs              = "SUPER + SHIFT",
   kbMoveWinToWsGroup         = "CTRL + SUPER + ALT",
 
   -- All the following binds can be either an array of binds to bind multiple keys, or a single string.
@@ -109,7 +109,13 @@ return {
   kbCloseWindow              = "SUPER + Q",
 
   -- Special workspaces toggles
-  kbSpecialWs                = "SUPER + S",
+  -- kbSpecialWs disabled here — its bind (hypr/utils/functions.lua's
+  -- generic fn.toggle("specialws")) targets whatever special workspace is
+  -- *currently* active, not specifically "special:special", so pressing
+  -- it while e.g. communication (SUPER+D) is open closes communication
+  -- instead of opening the scratchpad. See hypr-user.lua for the
+  -- replacement, which always targets special:special.
+  kbSpecialWs                = "",
   kbSystemMonitorWs          = "CTRL + SHIFT + Escape",
   kbMusicWs                  = "SUPER + M",
   kbCommunicationWs          = "SUPER + D",
@@ -139,7 +145,10 @@ return {
   kbVolumeMute               = "SUPER + SHIFT + M",
 
   -- Misc
-  kbLauncher                 = "SUPER + SUPER_L",
+  -- Disabled here — kbLauncher only works via variables.lua's default
+  -- comparison against "SUPER + SUPER_L" (see hypr-user.lua's custom bind,
+  -- which replaces this with a real SUPER+TAB combo wired correctly).
+  kbLauncher                 = "",
   kbSession                  = "CTRL + ALT + Delete",
   kbShowSidebar              = "SUPER + N",
   kbClearNotifs              = "CTRL + ALT + C",
