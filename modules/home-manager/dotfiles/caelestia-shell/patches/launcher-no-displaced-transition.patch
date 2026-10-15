@@ -1,0 +1,22 @@
+--- a/modules/launcher/AppList.qml
++++ b/modules/launcher/AppList.qml
+@@ -236,16 +236,9 @@
+         }
+     }
+ 
+-    displaced: Transition {
+-        Anim {
+-            property: "y"
+-        }
+-        Anim {
+-            type: Anim.DefaultEffects
+-            property: "opacity"
+-            to: 1
+-        }
+-    }
++    // No `displaced` transition: with it, typing fast (e.g. "di", keystrokes
++    // < ~400ms apart) segfaults quickshell in QQmlDelegateModel::itemsMoved
++    // after ScriptModel reorders rows. Reproducible; gone without it.
+ 
+     Component {
+         id: appItem

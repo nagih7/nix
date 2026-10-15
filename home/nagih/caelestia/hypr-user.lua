@@ -39,3 +39,41 @@ hl.bind("SUPER + S", function()
     hl.dispatch(hl.dsp.focus({ workspace = "special:special" }))
   end
 end)
+
+-- Monitor layout: the active `monitors` profile (see
+-- home/nagih/caelestia/default.nix; `monitors list|apply|save`). Loaded
+-- here, last, so it overrides general.lua's auto-detect hl.monitor call,
+-- and re-applied on every hyprctl reload. The pointer is in ~/.local/state,
+-- not the repo. A broken profile falls back to `default` instead of
+-- aborting the rest of this file.
+do
+  local home = os.getenv("HOME")
+  local pointer = (os.getenv("XDG_STATE_HOME") or (home .. "/.local/state")) .. "/monitor-profiles/active"
+  local f = io.open(pointer)
+  local name = f and f:read("*l") or "default"
+  if f then f:close() end
+
+  local function load(profile)
+    return pcall(dofile, home .. "/.config/caelestia/monitor-profiles/" .. profile .. ".lua")
+  end
+
+  if not load(name) and name ~= "default" then
+    load("default")
+  end
+end
+
+-- Apps that open fullscreen by default (window class, see
+-- `hyprctl clients | grep class`). Add/remove entries here, then
+-- `hyprctl reload` — no home-manager switch needed. Only affects windows
+-- opened after the reload.
+local fullscreenApps = {
+  "zen",
+  "com.anthropic.Claude",
+}
+
+if #fullscreenApps > 0 then
+  hl.window_rule({
+    match = { class = "^(" .. table.concat(fullscreenApps, "|") .. ")$" },
+    fullscreen = true,
+  })
+end

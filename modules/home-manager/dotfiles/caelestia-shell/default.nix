@@ -64,6 +64,18 @@ in
   config.programs.caelestia = lib.mkIf active {
     enable = true;
     cli.enable = true;
+    # Same package the module defaults to (flake's with-cli), plus one patch:
+    # the launcher's ListView `displaced` transition segfaults quickshell
+    # when results are typed fast (e.g. "di") — details in the patch itself.
+    # Only the final shell derivation rebuilds (cmake install of QML); the
+    # C++ plugin/extras are separate derivations and stay cached. If an
+    # upstream bump changes AppList.qml enough that this no longer applies,
+    # the build fails loudly here rather than silently dropping the fix.
+    package =
+      caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.with-cli.overrideAttrs
+        (old: {
+          patches = (old.patches or [ ]) ++ [ ./patches/launcher-no-displaced-transition.patch ];
+        });
     # Never set cli.settings/cli.extraConfig (or settings/extraConfig for
     # the shell): the official module writes caelestia/cli.json (and
     # shell.json) itself as soon as either is non-empty, which would

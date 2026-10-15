@@ -21,9 +21,13 @@
   # hl.monitor({ output = "", mode = "preferred", position = "auto" }) call
   # (home-manager appends module extraConfig in import order, and this
   # module is imported after general.nix), so these calls win.
-  wayland.windowManager.hyprland.extraConfig = ''
+  #
+  # Legacy path, only for the ii provider: under caelestia the layout is a
+  # `monitors` profile instead (home/nagih/caelestia/monitor-profiles/, loaded by
+  # hypr-user.lua — editable and switchable without a home-manager switch).
+  wayland.windowManager.hyprland.extraConfig = lib.mkIf (config.custom.desktopShell.name != "caelestia") ''
     -- appearance.lua — manual monitor layout (overrides general.lua's auto-detect)
     hl.monitor({ output = "DP-2", mode = "2560x1440@180", position = "0x0", scale = 1 })
-    hl.monitor({ output = "HDMI-A-1", mode = "1920x1080@144", position = "-1080x-240", scale = 1, transform = 3 })
+    hl.monitor({ output = "HDMI-A-1", mode = "1920x1080@144", position = "-1920x0", scale = 1, transform = 0 })
   '';
 }
