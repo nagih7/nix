@@ -3,6 +3,7 @@
 {
   programs.git = {
     enable = true;
+    package = pkgs.gitFull;
 
     settings = {
       init.defaultBranch = "main";
@@ -12,7 +13,7 @@
       core.pager = "delta";
       # Tokens go to the GNOME keyring (unlocked by PAM at login) instead of
       # plaintext ~/.git-credentials.
-      credential.helper = "${pkgs.git.override { withLibsecret = true; }}/bin/git-credential-libsecret";
+      credential.helper = "libsecret";
 
       interactive.diffFilter = "delta --color-only";
 

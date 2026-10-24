@@ -30,7 +30,7 @@ for i = 1, 10 do
 end
 
 -- SUPER + S: always activate special:special (the scratchpad), never
--- deactivate whatever else is open. 
+-- deactivate whatever else is open.
 hl.bind("SUPER + S", function()
   local active = hl.get_active_special_workspace()
   if active and active.name == "special:special" then
@@ -69,6 +69,7 @@ end
 local fullscreenApps = {
   "zen",
   "com.anthropic.Claude",
+  "code"
 }
 
 if #fullscreenApps > 0 then
@@ -77,3 +78,9 @@ if #fullscreenApps > 0 then
     fullscreen = true,
   })
 end
+
+-- Region screenshot straight to the clipboard (freeze mode), replacing the
+-- upstream kbScreenshotFreeze bind (disabled in hypr-vars.lua) which opens
+-- the region in swappy instead. Caelestia ships the clipboard-only variant
+-- as its own global shortcut — see modules/areapicker/AreaPicker.qml.
+hl.bind("SUPER + SHIFT + S", hl.dsp.global("caelestia:screenshotFreezeClip"))

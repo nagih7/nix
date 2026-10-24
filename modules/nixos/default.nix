@@ -29,11 +29,11 @@
     ./services/cloudflared.nix
     ./services/obs-studio.nix
     ./services/smb.nix
-    # ./services/warp.nix
 
     # === FEATURES ===
     ./features/cli.nix
     ./features/locale.nix
     ./features/nix-ld.nix
+    ./features/fcitx5-lotus.nix # uinput daemon for dotfiles/fcitx5
   ];
 }

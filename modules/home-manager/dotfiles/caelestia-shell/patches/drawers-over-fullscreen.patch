@@ -1,0 +1,41 @@
+diff --git a/modules/Shortcuts.qml b/modules/Shortcuts.qml
+index 4231a262..383cc386 100644
+--- a/modules/Shortcuts.qml
++++ b/modules/Shortcuts.qml
+@@ -111,8 +111,8 @@ Scope {
+     IpcHandler {
+         function toggle(drawer: string): void {
+             if (list().split("\n").includes(drawer)) {
+-                if (root.hasFullscreen && ["launcher", "session", "dashboard"].includes(drawer))
+-                    return;
++                // No hasFullscreen guard: these drawers are usable over a
++                // fullscreen window (see ContentWindow.qml's layer/mask).
+                 const screenState = ShellState.forActive();
+                 screenState[drawer] = !screenState[drawer];
+             } else {
+diff --git a/modules/drawers/ContentWindow.qml b/modules/drawers/ContentWindow.qml
+index 212682f9..50d3afde 100644
+--- a/modules/drawers/ContentWindow.qml
++++ b/modules/drawers/ContentWindow.qml
+@@ -35,6 +35,8 @@ StyledWindow {
+         return hasFullscreenOnNormalWs;
+     }
+ 
++    readonly property bool hasOpenDrawer: screenState.launcher || screenState.session || screenState.dashboard
++
+     property real fsTransitionProg: hasFullscreen ? 1 : 0
+     readonly property real sdfBorderOffset: 2 * fsTransitionProg // SDFs joins are not exact, so offset by 2px to ensure nothing shows
+     readonly property real borderThickness: contentItem.Config.border.thickness * (1 - fsTransitionProg)
+@@ -67,10 +69,10 @@ StyledWindow {
+ 
+     name: "drawers"
+     WlrLayershell.exclusionMode: ExclusionMode.Ignore
+-    WlrLayershell.layer: (fsTransitionProg > 0 && contentItem.Config.general.showOverFullscreen) || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top
++    WlrLayershell.layer: fsTransitionProg > 0 || (hasSpecialWorkspace && hasFullscreenOnNormalWs) ? WlrLayer.Overlay : WlrLayer.Top
+     WlrLayershell.keyboardFocus: screenState.launcher || screenState.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+ 
+-    mask: hasFullscreen ? emptyRegion : regions
++    mask: hasFullscreen && !hasOpenDrawer ? emptyRegion : regions
+ 
+     anchors.top: true
+     anchors.bottom: true

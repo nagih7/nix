@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   userObj,
   inputs,
@@ -28,11 +29,9 @@ in
     pkgs.unstable.discord
     pkgs.unstable.vscode
     pkgs.unstable.telegram-desktop
-    pkgs.unstable.slack
     pkgs.unstable.obsidian
     pkgs.unstable.teams-for-linux
     pkgs.unstable.bruno
-    pkgs.yarn
     pkgs.unstable.claude-code
     pkgs.unstable.livecaptions
     pkgs.unstable.kmidimon
@@ -41,7 +40,6 @@ in
     udisks
     calibre
     awscli2
-    wireguard-tools
     jellyfin
     syncplay
     unrar
@@ -49,6 +47,9 @@ in
     drawio
     virt-viewer
     omnissa-horizon-client
+    kdePackages.kdenlive
+    git-credential-manager
+    gitFull
     # (prismlauncher.override {
     #   jdks = [
     #     jdk
@@ -77,6 +78,9 @@ in
 
       echo "✅ Done: $OUTPUT"
     '')
+
+    # Nissan Nexus IDP
+    nodejs_22
   ];
 
   home.shellAliases = {
@@ -116,6 +120,13 @@ in
         identityFile = "~/.ssh/id_ed25519";
       };
 
+      "macos" = {
+        hostname = "192.168.0.16";
+        user = "nghiavm7";
+        port = 22;
+        identityFile = "~/.ssh/id_ed25519";
+      };
+
       "*" = {
         forwardAgent = false;
         serverAliveInterval = 60;
@@ -130,4 +141,18 @@ in
       };
     };
   };
+
+  # Claude Desktop runs in a bwrap user namespace where root-owned nix store
+  # files appear as "nobody", so OpenSSH rejects a symlinked ~/.ssh/config
+  # ("Bad owner or permissions"). Replace the symlink with a user-owned copy.
+  home.file.".ssh/config".force = true;
+
+  home.activation.sshConfigMutable = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+    f="$HOME/.ssh/config"
+    if [ -L "$f" ]; then
+      src="$(readlink -f "$f")"
+      rm "$f"
+      install -m 600 "$src" "$f"
+    fi
+  '';
 }

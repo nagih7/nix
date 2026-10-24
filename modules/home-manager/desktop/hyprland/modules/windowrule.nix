@@ -103,12 +103,6 @@
           move = "40 80";
         }
 
-        # --- Tiling Overrides ---
-        {
-          match.class = "^(dev\\.warp\\.Warp)$";
-          tile = true;
-        }
-
         # --- Picture-in-Picture (PiP) ---
         {
           match.title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$";

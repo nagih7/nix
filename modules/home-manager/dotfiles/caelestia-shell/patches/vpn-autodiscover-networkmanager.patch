@@ -1,0 +1,144 @@
+diff --git a/modules/nexus/pages/NetworkPage.qml b/modules/nexus/pages/NetworkPage.qml
+index a16fd88d..4325d404 100644
+--- a/modules/nexus/pages/NetworkPage.qml
++++ b/modules/nexus/pages/NetworkPage.qml
+@@ -332,6 +332,15 @@ PageBase {
+                         isRound: true
+                         icon: "edit"
+                         onClicked: {
++                            // Auto-discovered entries have no config entry
++                            // behind them, so the sub-page has nothing to
++                            // edit. Their real settings (keys, peers,
++                            // endpoint) live in NetworkManager — open them
++                            // where they can actually be changed.
++                            if (provider.modelData.auto) {
++                                Quickshell.execDetached(["nm-connection-editor", `--edit=${provider.modelData.uuid}`]);
++                                return;
++                            }
+                             root.nState.editingVpnIndex = provider.index;
+                             root.nState.openSubPage(4); // Add/edit provider sub-page
+                         }
+diff --git a/services/VPN.qml b/services/VPN.qml
+index 6aa916cc..b23c9b1c 100644
+--- a/services/VPN.qml
++++ b/services/VPN.qml
+@@ -85,10 +85,47 @@ Singleton {
+ 
+     readonly property var adapters: [wireguardAdapter, warpAdapter, netbirdAdapter, tailscaleAdapter]
+ 
+-    // Live list of configured providers, straight from the typed config list.
+-    // Each entry is a config node with id/name/displayName/interface and the
+-    // optional connect/disconnect commands.
+-    readonly property var providers: GlobalConfig.utilities.vpn.provider.values
++    // Auto-discovered NetworkManager VPN connections, so a tunnel created in
++    // nmcli / nm-connection-editor is usable here without being declared a
++    // second time. Refreshed by nmProvidersProc below.
++    property var nmProviders: []
++
++    // Turn nmProvidersProc's "<uuid>\t<name>\t<interface>" lines into provider
++    // entries shaped like the config ones. These are plain objects, not config
++    // nodes: they carry `auto: true`, and every index-based mutation below
++    // refuses them (they have no backing config entry to write to).
++    function parseNmProviders(output: string): var {
++        const out = [];
++        for (const line of output.trim().split("\n")) {
++            if (line.length === 0)
++                continue;
++            const [uuid, name, iface] = line.split("\t");
++            if (!uuid)
++                continue;
++            out.push({
++                id: `nm:${uuid}`,
++                auto: true,
++                uuid: uuid,
++                name: name || uuid,
++                displayName: name || uuid,
++                interface: iface || "",
++                connectCmd: ["nmcli", "con", "up", "uuid", uuid],
++                disconnectCmd: ["nmcli", "con", "down", "uuid", uuid]
++            });
++        }
++        return out;
++    }
++
++    // Live list of providers: the typed config list first (so its entries keep
++    // their indices, which the editing UI addresses them by), then the
++    // auto-discovered ones. An auto entry is dropped when a configured entry
++    // already drives the same interface, so hand-written overrides win instead
++    // of showing up twice.
++    readonly property var providers: {
++        const configured = GlobalConfig.utilities.vpn.provider.values;
++        const taken = configured.map(p => p.interface).filter(i => i.length > 0);
++        return [...configured, ...root.nmProviders.filter(p => !taken.includes(p.interface))];
++    }
+ 
+     // Provider entry keys which are cleared when empty instead of written.
+     readonly property list<string> optionalKeys: ["displayName", "interface", "connectCmd", "disconnectCmd"]
+@@ -120,9 +157,10 @@ Singleton {
+         return props;
+     }
+ 
+-    // Resolve the stable internal id of the provider entry at `index`.
++    // Resolve the stable internal id of the provider entry at `index`. Indexes
++    // into the combined list, so it also resolves auto-discovered entries.
+     function providerIdAt(index: int): string {
+-        return GlobalConfig.utilities.vpn.provider.at(index)?.id ?? "";
++        return root.providers[index]?.id ?? "";
+     }
+ 
+     // Add a new provider. data: { name, displayName, interface, connectCmd[],
+@@ -134,6 +172,8 @@ Singleton {
+     // Update an existing provider (by index), preserving its internal id so the
+     // selection sticks even when the name changes.
+     function updateProvider(index: int, data: var): void {
++        if (root.providers[index]?.auto)
++            return; // Auto-discovered: edit it in NetworkManager instead.
+         const provider = GlobalConfig.utilities.vpn.provider.at(index);
+         if (!provider)
+             return;
+@@ -147,6 +187,8 @@ Singleton {
+     // Delete a provider by index. ensureSelection() re-homes the selection to
+     // the first remaining provider if the deleted one was selected.
+     function deleteProvider(index: int): void {
++        if (root.providers[index]?.auto)
++            return; // Auto-discovered: delete it in NetworkManager instead.
+         GlobalConfig.utilities.vpn.provider.remove(index);
+     }
+ 
+@@ -613,6 +655,36 @@ Singleton {
+         }
+     }
+ 
++    Process {
++        id: nmProvidersProc
++
++        // List mode has no interface-name field and only reports DEVICE while
++        // the connection is up, so the interface is queried per connection.
++        // Iterating UUIDs (never ":"-escaped, unlike names) keeps the parse
++        // robust against connection names containing colons.
++        command: ["sh", "-c", "for u in $(nmcli -g UUID con show); do t=$(nmcli -g connection.type con show uuid \"$u\" 2>/dev/null); case \"$t\" in wireguard|vpn) ;; *) continue ;; esac; printf '%s\\t%s\\t%s\\n' \"$u\" \"$(nmcli -g connection.id con show uuid \"$u\" 2>/dev/null)\" \"$(nmcli -g connection.interface-name con show uuid \"$u\" 2>/dev/null)\"; done"]
++        running: true
++        environment: ({
++                LANG: "C.UTF-8",
++                LC_ALL: "C.UTF-8"
++            })
++        stdout: StdioCollector {
++            onStreamFinished: {
++                root.nmProviders = root.parseNmProviders(text);
++                root.ensureSelection();
++            }
++        }
++    }
++
++    Timer {
++        // Picks up connections added/removed in NetworkManager while the shell
++        // is running.
++        interval: 30000
++        repeat: true
++        running: true
++        onTriggered: nmProvidersProc.running = true
++    }
++
+     Process {
+         id: statusProc
+ 

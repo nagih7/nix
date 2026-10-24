@@ -54,7 +54,7 @@ return {
   -- inactiveWindowBorderColour = "rgba(" .. scheme.onSurfaceVariant .. "11)",
 
   -- Misc
-  volumeStep                 = 3,
+  volumeStep                 = 5,
   volumeMax                  = 120,
   cursorTheme                = "sweet-cursors",
   cursorSize                 = 24,
@@ -130,7 +130,10 @@ return {
 
   -- Utilities
   kbScreenshot               = "Print",
-  kbScreenshotFreeze         = "SUPER + SHIFT + S",
+  -- Disabled here — the upstream bind targets caelestia:screenshotFreeze,
+  -- which hands the region to swappy. hypr-user.lua rebinds the same combo
+  -- to caelestia:screenshotFreezeClip instead (straight to wl-copy).
+  kbScreenshotFreeze         = "",
   kbScreenshotRegion         = "SUPER + SHIFT + ALT + S",
   kbRecord                   = "CTRL + ALT + R",
   kbRecordSound              = "SUPER + ALT + R",

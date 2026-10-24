@@ -1,0 +1,16 @@
+diff --git a/modules/areapicker/Picker.qml b/modules/areapicker/Picker.qml
+index 0804cfba..ab2c940f 100644
+--- a/modules/areapicker/Picker.qml
++++ b/modules/areapicker/Picker.qml
+@@ -236,7 +236,10 @@ MouseArea {
+ 
+         anchors.fill: parent
+         color: Colours.palette.m3secondaryContainer
+-        opacity: 0.3
++        // Clipboard-only modes (caelestia:screenshotClip /
++        // screenshotFreezeClip) skip the dim; the selection border
++        // still shows what is being captured.
++        opacity: root.loader.clipboardOnly ? 0 : 0.3
+ 
+         layer.enabled: true
+         layer.effect: Mask {

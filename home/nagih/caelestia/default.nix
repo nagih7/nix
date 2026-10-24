@@ -104,11 +104,36 @@ in
   # get applied to ~/.config/caelestia/shell.json (short version: seeded
   # once each, only if genuinely missing — never overwrites a value you or
   # the shell itself later changes).
-  custom.caelestiaShell.shellJsonDefaults = {
-    osd = {
-      enableMicrophone = true;
-      enableBrightness = false;
+  custom.caelestiaShell = {
+    shellJsonDefaults = {
+      osd = {
+        enableMicrophone = true;
+        enableBrightness = false;
+      };
+
+      # Not declared here: utilities.vpn. It was seeded once (NetworkManager
+      # connection "Nagih Admin" on interface "Desktop", driven by nmcli
+      # rather than the built-in adapter's wg-quick, which doesn't apply to
+      # an NM-managed tunnel) and is now edited live — in the shell's own
+      # settings UI or ~/.config/caelestia/shell.json. Re-adding it here
+      # would be inert anyway: the seed merges `defaults * live`, so live
+      # wins on every key it already has, and `provider` being a list is
+      # replaced wholesale rather than merged.
     };
+
+    # Region screenshot picker: no tint outside the selection in the
+    # clipboard-only modes (SUPER+SHIFT+S — see hypr-user.lua). Build-time
+    # patch, so flipping this needs a switch + caelestia.service restart.
+    dimOutsideSelection = false;
+
+    # Launcher (SUPER+TAB) usable over a fullscreen window. Build-time
+    # patch, so flipping this needs a switch + caelestia.service restart.
+    drawersOverFullscreen = true;
+
+    # VPN panel lists NetworkManager connections itself, so a tunnel only has
+    # to be created in NM (nmcli / nm-connection-editor) and never described
+    # again in shell.json. Build-time patch: switch + service restart.
+    vpnAutodiscover = true;
   };
 
   home.packages = lib.mkIf active [ monitors ];

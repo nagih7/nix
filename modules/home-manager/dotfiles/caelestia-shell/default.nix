@@ -42,40 +42,105 @@ in
   # supported by the module system ("unsupported attribute" eval error,
   # confirmed) — everything below has to move under an explicit `config`
   # once `options` is declared here.
-  options.custom.caelestiaShell.shellJsonDefaults = lib.mkOption {
-    type = lib.types.attrs;
-    default = { };
-    example = {
-      osd = {
-        enableMicrophone = true;
-        enableBrightness = false;
+  options.custom.caelestiaShell = {
+    shellJsonDefaults = lib.mkOption {
+      type = lib.types.attrs;
+      default = { };
+      example = {
+        osd = {
+          enableMicrophone = true;
+          enableBrightness = false;
+        };
       };
+      description = ''
+        One-time seed defaults for ~/.config/caelestia/shell.json, declared
+        centrally (e.g. in home/nagih/default.nix) instead of hand-editing
+        the live file. See the seedShellJsonDefaults activation script below
+        for exactly how and when these get applied (short version: only
+        fills in keys that are genuinely missing from the live file, once;
+        never overwrites an existing value, including an explicit `false`).
+      '';
     };
-    description = ''
-      One-time seed defaults for ~/.config/caelestia/shell.json, declared
-      centrally (e.g. in home/nagih/default.nix) instead of hand-editing
-      the live file. See the seedShellJsonDefaults activation script below
-      for exactly how and when these get applied (short version: only
-      fills in keys that are genuinely missing from the live file, once;
-      never overwrites an existing value, including an explicit `false`).
-    '';
+
+    vpnAutodiscover = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Whether the VPN panel lists NetworkManager VPN connections on its
+        own. Upstream only ever shows what shell.json's
+        utilities.vpn.provider declares, so a tunnel has to be described
+        twice: once in NetworkManager (keys, peers, endpoint) and again
+        there (name, interface, nmcli commands). `true` patches
+        services/VPN.qml to poll `nmcli` for wireguard/vpn connections and
+        fold them into the provider list, keyed `nm:<uuid>` so renaming the
+        connection in NM doesn't break them.
+
+        An auto entry is skipped when a configured entry already drives the
+        same interface, so a hand-written override still wins. Auto entries
+        aren't editable in the shell (the edit button is hidden): there is no
+        config entry behind them, so they're changed in NetworkManager.
+
+        Build-time patch: flipping it needs a home-manager switch plus a
+        `systemctl --user restart caelestia.service`, and that restart closes
+        apps launched from the shell's launcher.
+      '';
+    };
+
+    drawersOverFullscreen = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Whether the launcher/session/dashboard drawers work while a
+        fullscreen window is focused. Upstream blocks all three: the drawers
+        IPC `toggle` refuses them outright (modules/Shortcuts.qml), the
+        layershell surface stays below the fullscreen window unless
+        general.showOverFullscreen is set, and the input mask is emptied
+        (modules/drawers/ContentWindow.qml). `true` patches all three, so
+        the layer goes to Overlay and the mask keeps the drawer regions
+        whenever one is open — no shell.json key needed.
+
+        Build-time patch: flipping it needs a home-manager switch plus a
+        `systemctl --user restart caelestia.service`, and that restart
+        closes apps launched from the shell's launcher.
+      '';
+    };
+
+    dimOutsideSelection = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = ''
+        Whether the region screenshot picker tints everything outside the
+        selection. Upstream always does; `false` applies a patch that skips
+        the tint in the clipboard-only modes (caelestia:screenshotClip and
+        screenshotFreezeClip), leaving the swappy-bound modes dimmed. The
+        selection border shows the capture area either way.
+
+        Unlike shellJsonDefaults this is a build-time patch, so flipping it
+        needs a home-manager switch plus a `systemctl --user restart
+        caelestia.service` — and that restart closes apps launched from the
+        shell's launcher.
+      '';
+    };
   };
 
   config.programs.caelestia = lib.mkIf active {
     enable = true;
     cli.enable = true;
-    # Same package the module defaults to (flake's with-cli), plus one patch:
-    # the launcher's ListView `displaced` transition segfaults quickshell
-    # when results are typed fast (e.g. "di") — details in the patch itself.
-    # Only the final shell derivation rebuilds (cmake install of QML); the
-    # C++ plugin/extras are separate derivations and stay cached. If an
-    # upstream bump changes AppList.qml enough that this no longer applies,
-    # the build fails loudly here rather than silently dropping the fix.
-    package =
-      caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.with-cli.overrideAttrs
-        (old: {
-          patches = (old.patches or [ ]) ++ [ ./patches/launcher-no-displaced-transition.patch ];
-        });
+    # Same package the module defaults to (flake's with-cli), plus the local
+    # QML patches — what each one fixes, which option gates it, and how to
+    # retest/regenerate after an upstream bump: ./patches/README.md.
+    # A patch that stops applying fails the build rather than being silently
+    # dropped, so a stale fix can't rot unnoticed.
+    package = caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.with-cli.overrideAttrs (old: {
+      patches =
+        (old.patches or [ ])
+        ++ [ ./patches/launcher-no-displaced-transition.patch ]
+        ++ lib.optional (
+          !config.custom.caelestiaShell.dimOutsideSelection
+        ) ./patches/picker-no-dim-in-clipboard-mode.patch
+        ++ lib.optional config.custom.caelestiaShell.drawersOverFullscreen ./patches/drawers-over-fullscreen.patch
+        ++ lib.optional config.custom.caelestiaShell.vpnAutodiscover ./patches/vpn-autodiscover-networkmanager.patch;
+    });
     # Never set cli.settings/cli.extraConfig (or settings/extraConfig for
     # the shell): the official module writes caelestia/cli.json (and
     # shell.json) itself as soon as either is non-empty, which would
@@ -175,8 +240,10 @@ in
   # unmanaged (or seed once, like scheme/current.lua) if you want them at
   # all — never a live repo symlink.
   config.xdg.configFile = lib.mkIf active {
-    "caelestia/hypr-vars.lua".source = outOfStore "${hostVars.nixConfig}/home/nagih/caelestia/hypr-vars.lua";
-    "caelestia/hypr-user.lua".source = outOfStore "${hostVars.nixConfig}/home/nagih/caelestia/hypr-user.lua";
+    "caelestia/hypr-vars.lua".source =
+      outOfStore "${hostVars.nixConfig}/home/nagih/caelestia/hypr-vars.lua";
+    "caelestia/hypr-user.lua".source =
+      outOfStore "${hostVars.nixConfig}/home/nagih/caelestia/hypr-user.lua";
     "caelestia/cli.json".source = outOfStore "${hostVars.nixConfig}/home/nagih/caelestia/cli.json";
     "caelestia/templates".source = outOfStore "${hostVars.nixConfig}/home/nagih/caelestia/templates";
   };
