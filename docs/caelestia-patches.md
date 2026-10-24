@@ -21,7 +21,7 @@ from the shell's launcher (they live in the service's cgroup).
 | --- | --- | --- |
 | `launcher-no-displaced-transition.patch` | always on | `modules/launcher/AppList.qml` |
 | `picker-no-dim-in-clipboard-mode.patch` | `custom.caelestiaShell.dimOutsideSelection = false` | `modules/areapicker/Picker.qml` |
-| `drawers-over-fullscreen.patch` | `custom.caelestiaShell.drawersOverFullscreen = true` | `modules/Shortcuts.qml`, `modules/drawers/ContentWindow.qml` |
+| `drawers-over-fullscreen.patch` | `custom.caelestiaShell.drawersOverFullscreen = true` | `modules/Shortcuts.qml`, `modules/drawers/{ContentWindow,Interactions}.qml`, `modules/bar/BarWrapper.qml` |
 | `vpn-autodiscover-networkmanager.patch` | `custom.caelestiaShell.vpnAutodiscover = true` | `services/VPN.qml`, `modules/nexus/pages/NetworkPage.qml` |
 
 Options are declared in [`caelestia-shell/default.nix`](../modules/home-manager/dotfiles/caelestia-shell/default.nix) and set centrally in
@@ -66,6 +66,28 @@ to go, so a partial revert silently does nothing:
 3. `modules/drawers/ContentWindow.qml` — `mask` is set to `emptyRegion` while
    fullscreen, emptying the input region. The patch adds a `hasOpenDrawer`
    property and keeps `regions` whenever a drawer is open.
+
+The same patch also restores **hover-to-reveal at the screen edges** while
+fullscreen, which upstream shuts off in three more places:
+
+4. `ContentWindow.qml` — `mask` is now always `regions`. While fullscreen those
+   collapse to a `Config.border.minThickness` (2px) strip around the screen
+   edge plus any open panel; that strip is what receives the pointer. 2px is
+   enough because pushing the mouse to an edge pins the cursor at `0` or
+   `width - 1`, inside the strip.
+5. `Interactions.qml` — `onPositionChanged` returned early on fullscreen after
+   handling only the OSD, `acceptedButtons` was `Qt.NoButton`, and `onWheel`
+   returned early. All three now run normally, so a panel revealed by hovering
+   can also be clicked and scrolled.
+6. `BarWrapper.qml` — `shouldBeVisible` was `&& !fullscreen`, so hover could
+   never bring the bar back. It now allows `screenState.bar`/`isHovered` while
+   fullscreen but still ignores `Config.bar.persistent` there, which would
+   otherwise park the bar permanently on top of a fullscreen window.
+
+The cost: that 2px edge strip takes pointer input away from the fullscreen
+window. In a fullscreen game, a cursor slammed to an edge hits the shell
+instead. That is exactly what upstream's guards were avoiding, so this is the
+knob to turn off first if edge behaviour in a game looks wrong.
 
 Left alone on purpose: `onHasFullscreenChanged` still closes open drawers when
 you *enter* fullscreen. Only reopening while already fullscreen was broken.

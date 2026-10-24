@@ -90,14 +90,14 @@ in
       type = lib.types.bool;
       default = false;
       description = ''
-        Whether the launcher/session/dashboard drawers work while a
-        fullscreen window is focused. Upstream blocks all three: the drawers
-        IPC `toggle` refuses them outright (modules/Shortcuts.qml), the
-        layershell surface stays below the fullscreen window unless
-        general.showOverFullscreen is set, and the input mask is emptied
-        (modules/drawers/ContentWindow.qml). `true` patches all three, so
-        the layer goes to Overlay and the mask keeps the drawer regions
-        whenever one is open — no shell.json key needed.
+        Whether the shell stays usable while a fullscreen window is focused:
+        the launcher/session/dashboard keybinds, and hover-to-reveal at the
+        screen edges. Upstream disables both in several independent places —
+        the drawers IPC `toggle`, the layershell layer, the input mask, every
+        hover/click/scroll path in Interactions.qml, and the bar's own
+        visibility. `true` patches all of them; see
+        docs/caelestia-patches.md for the list and for the tradeoff (a 2px
+        edge strip takes pointer input from the fullscreen window).
 
         Build-time patch: flipping it needs a home-manager switch plus a
         `systemctl --user restart caelestia.service`, and that restart

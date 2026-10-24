@@ -13,8 +13,24 @@ index 4231a262..383cc386 100644
                  const screenState = ShellState.forActive();
                  screenState[drawer] = !screenState[drawer];
              } else {
+diff --git a/modules/bar/BarWrapper.qml b/modules/bar/BarWrapper.qml
+index 063c0d73..0c4a30f3 100644
+--- a/modules/bar/BarWrapper.qml
++++ b/modules/bar/BarWrapper.qml
+@@ -21,7 +21,10 @@ Item {
+     readonly property int padding: Math.max(Tokens.padding.small, Config.border.thickness)
+     readonly property int contentWidth: Tokens.sizes.bar.innerWidth + padding * 2
+     readonly property int exclusiveZone: !disabled && (Config.bar.persistent || screenState.bar) ? contentWidth : Config.border.thickness
+-    readonly property bool shouldBeVisible: !fullscreen && !disabled && (Config.bar.persistent || screenState.bar || isHovered)
++    // `persistent` is ignored while fullscreen (the bar would sit on top of
++    // the fullscreen window), but hovering the screen edge or toggling it
++    // explicitly still reveals it.
++    readonly property bool shouldBeVisible: !disabled && ((!fullscreen && Config.bar.persistent) || screenState.bar || isHovered)
+     property bool isHovered
+ 
+     function closeTray(): void {
 diff --git a/modules/drawers/ContentWindow.qml b/modules/drawers/ContentWindow.qml
-index 212682f9..50d3afde 100644
+index 212682f9..02de87c4 100644
 --- a/modules/drawers/ContentWindow.qml
 +++ b/modules/drawers/ContentWindow.qml
 @@ -35,6 +35,8 @@ StyledWindow {
@@ -26,7 +42,7 @@ index 212682f9..50d3afde 100644
      property real fsTransitionProg: hasFullscreen ? 1 : 0
      readonly property real sdfBorderOffset: 2 * fsTransitionProg // SDFs joins are not exact, so offset by 2px to ensure nothing shows
      readonly property real borderThickness: contentItem.Config.border.thickness * (1 - fsTransitionProg)
-@@ -67,10 +69,10 @@ StyledWindow {
+@@ -67,10 +69,14 @@ StyledWindow {
  
      name: "drawers"
      WlrLayershell.exclusionMode: ExclusionMode.Ignore
@@ -35,7 +51,46 @@ index 212682f9..50d3afde 100644
      WlrLayershell.keyboardFocus: screenState.launcher || screenState.session ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
  
 -    mask: hasFullscreen ? emptyRegion : regions
-+    mask: hasFullscreen && !hasOpenDrawer ? emptyRegion : regions
++    // Always the full regions: while fullscreen these collapse to a
++    // minThickness (2px) strip around the screen edge plus whatever panel is
++    // open, which is what makes hover-to-reveal work there. emptyRegion is
++    // kept below for reference but no longer used.
++    mask: regions
  
      anchors.top: true
      anchors.bottom: true
+diff --git a/modules/drawers/Interactions.qml b/modules/drawers/Interactions.qml
+index 3d94a528..bd6aee88 100644
+--- a/modules/drawers/Interactions.qml
++++ b/modules/drawers/Interactions.qml
+@@ -52,15 +52,15 @@ CustomMouseArea {
+     }
+ 
+     function onWheel(event: WheelEvent): void {
+-        if (fullscreen)
+-            return;
+         if (event.x < bar.implicitWidth) {
+             bar.handleWheel(event.y, event.angleDelta);
+         }
+     }
+ 
+     anchors.fill: parent
+-    acceptedButtons: fullscreen ? Qt.NoButton : Qt.AllButtons
++    // Buttons stay live while fullscreen so a panel revealed by hovering the
++    // screen edge can actually be clicked.
++    acceptedButtons: Qt.AllButtons
+     hoverEnabled: true
+ 
+     onPressed: event => dragStart = Qt.point(event.x, event.y)
+@@ -100,11 +100,6 @@ CustomMouseArea {
+         const dragX = x - dragStart.x;
+         const dragY = y - dragStart.y;
+ 
+-        if (fullscreen) {
+-            root.panels.osd.hovered = inRightPanel(panels.osdWrapper, x, y);
+-            return;
+-        }
+-
+         // Show bar in non-exclusive mode on hover
+         if (!screenState.bar && Config.bar.showOnHover && x < bar.clampedWidth)
+             bar.isHovered = true;
