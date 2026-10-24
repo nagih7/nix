@@ -81,6 +81,37 @@ directory — a stray `README.md` under `caelestia/templates/` gets
 template-substituted like any other template, which is why the docs live here
 instead.
 
+### Config this repo deliberately does not own
+
+Some apps keep their own read/write config and are left alone entirely — not
+even seeded. They rewrite the file on every change made in their own UI, and
+the settings worth keeping are few enough that fighting them costs more than
+it saves. The tradeoff is that a reinstall loses them silently, so the ones
+that were hard to diagnose are written down here.
+
+**EasyEffects** (`~/.config/easyeffects/db/easyeffectsrc`, an INI file — the
+jq-based `shellJsonDefaults` seeding doesn't apply):
+
+- `[StreamOutputs] linkToVirtualSource` links the tail of the output
+  (speaker) effects chain into `easyeffects_source`, the virtual mic every
+  recording app captures from. With it on, **everything playing on the desktop
+  is mixed into the microphone** — the symptom is other people hearing your
+  audio echoed back in a meeting. In the UI it is *"Send the processed desktop
+  audio to the virtual source"* under Output. Keep it **false**; the
+  `blackhole` / `blackhole_mic` pair that `modules/nixos/desktop/audio.nix`
+  sets up is the deliberate way to expose desktop audio as a capture source,
+  without touching the real mic.
+- `[StreamOutputs] blocklist` excludes apps from the output chain entirely.
+  While `linkToVirtualSource` was on, that blocklist was what kept the worst
+  offenders out of the mic by accident; it is not an echo fix.
+
+Diagnosing this kind of thing is graph work, not config work:
+`pw-link -l` for who is connected to what, and `pw-dump` for the link
+properties. Note that `node.passive = true` on a node (EasyEffects sets it on
+`ee_soe_output_level`) makes *every* link from it passive, including the one to
+the real output device — so a passive link still carries audio, and passive is
+no evidence that a connection is inert.
+
 ## Hyprland Lua config
 
 Hyprland 0.55 with `configType = "lua"` — `hl.bind`, `hl.monitor({...})`,
