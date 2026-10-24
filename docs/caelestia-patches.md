@@ -1,7 +1,7 @@
 # caelestia-shell patches
 
 Local fixes applied to the upstream shell via `overrideAttrs { patches = ... }`
-in [`../default.nix`](../default.nix). Each one exists because the behaviour is
+in [`caelestia-shell/default.nix`](../modules/home-manager/dotfiles/caelestia-shell/default.nix). Each one exists because the behaviour is
 hardcoded in QML with no `shell.json` key to change it.
 
 ## Why a patch and not config
@@ -24,7 +24,7 @@ from the shell's launcher (they live in the service's cgroup).
 | `drawers-over-fullscreen.patch` | `custom.caelestiaShell.drawersOverFullscreen = true` | `modules/Shortcuts.qml`, `modules/drawers/ContentWindow.qml` |
 | `vpn-autodiscover-networkmanager.patch` | `custom.caelestiaShell.vpnAutodiscover = true` | `services/VPN.qml`, `modules/nexus/pages/NetworkPage.qml` |
 
-Options are declared in [`../default.nix`](../default.nix) and set centrally in
+Options are declared in [`caelestia-shell/default.nix`](../modules/home-manager/dotfiles/caelestia-shell/default.nix) and set centrally in
 `home/nagih/caelestia/default.nix`.
 
 ### `launcher-no-displaced-transition.patch`

@@ -128,7 +128,7 @@ in
     cli.enable = true;
     # Same package the module defaults to (flake's with-cli), plus the local
     # QML patches — what each one fixes, which option gates it, and how to
-    # retest/regenerate after an upstream bump: ./patches/README.md.
+    # retest/regenerate after an upstream bump: docs/caelestia-patches.md.
     # A patch that stops applying fails the build rather than being silently
     # dropped, so a stale fix can't rot unnoticed.
     package = caelestia-shell.packages.${pkgs.stdenv.hostPlatform.system}.with-cli.overrideAttrs (old: {

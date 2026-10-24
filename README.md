@@ -87,7 +87,21 @@ modules/home-manager/     user modules (apps, dotfiles, desktop shell providers)
 home/<user>/              per-user packages/aliases/ssh/syncthing
 secrets/                  agenix-encrypted files + recipient list (secrets.nix)
 overlays/                 pkgs.unstable.* overlay
+docs/                     how this config is wired — see below
 ```
+
+### Documentation
+
+Working on the config rather than just installing it? [`docs/`](./docs/) is the
+single place for that:
+
+| Doc | What it covers |
+| :-- | :-------------- |
+| [commands.md](./docs/commands.md) | Build and verify a change without a full switch; which changes need a switch, a reload, or a service restart |
+| [architecture.md](./docs/architecture.md) | Constants layering, the desktop-shell provider option, and the three ways config reaches disk |
+| [caelestia-patches.md](./docs/caelestia-patches.md) | Local QML patches to caelestia-shell and how to retest them after an upstream bump |
+| [quickshell-module.md](./docs/quickshell-module.md) | The hand-rolled `ii` quickshell module and its troubleshooting notes |
+| [caelestia-templates.md](./docs/caelestia-templates.md) | caelestia-cli theme template syntax |
 
 ### Secrets (agenix)
 

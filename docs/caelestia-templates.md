@@ -1,7 +1,7 @@
 # Custom caelestia-cli theme templates
 
 Symlinked live (out-of-store) at `~/.config/caelestia/templates/` — see
-../../../modules/home-manager/dotfiles/caelestia-shell/default.nix.
+[`caelestia-shell/default.nix`](../modules/home-manager/dotfiles/caelestia-shell/default.nix).
 
 Any file placed here gets template-substituted on every scheme/wallpaper
 change and written to `~/.local/state/caelestia/theme/<same-filename>`
