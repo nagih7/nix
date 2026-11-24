@@ -17,6 +17,7 @@
 
   firewall = {
     tcpPorts = [
+      22
       80
       443
       9757

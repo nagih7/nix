@@ -11,6 +11,7 @@ the first time (install, aliases, screenshots).
 | [caelestia-patches.md](caelestia-patches.md) | The local QML patches to caelestia-shell — what each fixes, the option gating it, how to retest and regenerate after an upstream bump |
 | [quickshell-module.md](quickshell-module.md) | The hand-rolled `ii` (end-4) quickshell module: structure and troubleshooting |
 | [caelestia-templates.md](caelestia-templates.md) | caelestia-cli theme templates — substitution syntax and where output lands |
+| [dictionary.md](dictionary.md) | The SUPER+CTRL+D dictionary popup — its three pieces, why it needs no dictd daemon, adding a Vietnamese dictionary, and the Hyprland 0.55 expression rules it is built on |
 
 Start with [architecture.md](architecture.md) if you're changing how something
 is wired, [commands.md](commands.md) if you just need to build and test.

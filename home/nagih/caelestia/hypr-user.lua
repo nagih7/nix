@@ -79,6 +79,13 @@ if #fullscreenApps > 0 then
   })
 end
 
+-- Dictionary "Look Up": select a word anywhere, press SUPER + CTRL + D, get a
+-- definition popup at the mouse. The shortcut lives here rather than in
+-- modules/home-manager/desktop/dictionary so it can be changed with
+-- `hyprctl reload`; the popup's size and placement are window rules in that
+-- module, because they have to agree with each other numerically.
+hl.bind("SUPER + CTRL + D", hl.dsp.exec_cmd("dict-popup"))
+
 -- Region screenshot straight to the clipboard (freeze mode), replacing the
 -- upstream kbScreenshotFreeze bind (disabled in hypr-vars.lua) which opens
 -- the region in swappy instead. Caelestia ships the clipboard-only variant

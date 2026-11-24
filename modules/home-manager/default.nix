@@ -8,6 +8,7 @@
     ./desktop/hyprland
     ./desktop/hyprlock
     ./desktop/hypridle.nix
+    ./desktop/dictionary
 
     # Dotfiles
     ./dotfiles/quickshell

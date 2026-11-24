@@ -31,8 +31,6 @@
       flake = false;
     };
 
-    # Local clones (see modules/home-manager/desktop-shell/providers/caelestia)
-    # while trying out the caelestia-dots shell before pointing at upstream.
     caelestia-shell = {
       url = "git+file:///home/nagih/Workspaces/config/caelestia-dots";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -50,6 +48,11 @@
 
     claude-desktop = {
       url = "github:aaddrick/claude-desktop-debian";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    
+    herdr = {
+      url = "github:herdrdev/herdr-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -109,6 +112,7 @@
               caelestia-dots
               zen-browser
               claude-desktop
+              herdr
               ;
           };
         in

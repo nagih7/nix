@@ -13,7 +13,7 @@
       "pulse.cmd" = [
         { cmd = "load-module"; args = "module-null-sink sink_name=blackhole sink_properties=device.description=BlackHole"; }
         { cmd = "load-module"; args = "module-null-sink sink_name=Null sink_properties=device.description=Null"; }
-        { cmd = "load-module"; args = "module-combine-sink sink_name=multi_output sink_properties=device.description=Multi-Output slaves=easyeffects_sink,easyeffects_source,blackhole"; }
+        { cmd = "load-module"; args = "module-combine-sink sink_name=multi_output sink_properties=device.description=Multi-Output slaves=easyeffects_sink,blackhole"; }
         { cmd = "load-module"; args = "module-remap-source master=blackhole.monitor source_name=blackhole_mic source_properties=device.description=\"BlackHole Source\""; }
       ];
     };

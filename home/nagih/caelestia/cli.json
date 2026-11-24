@@ -27,8 +27,8 @@
         "communication": {
             "discord": {
                 "enable": true,
-                "match": [{ "class": "teams-for-linux" }],
-                "command": ["teams-for-linux"],
+                "match": [{ "class": "discord" }],
+                "command": ["discord"],
                 "move": true
             },
             "whatsapp": {

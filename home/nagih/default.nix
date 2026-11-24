@@ -26,6 +26,7 @@ in
   home.packages = with pkgs; [
     inputs.zen-browser.packages.${system}.default
     inputs.claude-desktop.packages.${system}.default
+    inputs.herdr.packages.${system}.default
     pkgs.unstable.discord
     pkgs.unstable.vscode
     pkgs.unstable.telegram-desktop
@@ -50,12 +51,13 @@ in
     kdePackages.kdenlive
     git-credential-manager
     gitFull
-    # (prismlauncher.override {
-    #   jdks = [
-    #     jdk
-    #     jdk17
-    #   ];
-    # })
+    teleport
+    (prismlauncher.override {
+      jdks = [
+        jdk
+        jdk17
+      ];
+    })
     (writeShellScriptBin "kfx-convert" ''
       set -euo pipefail
 
@@ -113,8 +115,8 @@ in
     '';
 
     settings = {
-      "devbox" = {
-        hostname = "10.10.60.10";
+      "DevBox" = {
+        hostname = "10.99.0.11";
         user = "nagih";
         port = 22;
         identityFile = "~/.ssh/id_ed25519";
